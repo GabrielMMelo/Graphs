@@ -41,8 +41,7 @@ def ler_arquivo():
 
     return ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas
 
-	# TODO implementar o algoritmo de Ford Fulkerson que utilize como entrada uma matriz de adjacencia,
-	# um vertice de origem e um vertice de destino
+	
 class Queue:
     def __init__(self):
         self.items = []
@@ -59,29 +58,27 @@ class Queue:
 class GrafoBFS:
 	def __init__(self, ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas):
 		self.ma = ma
-		self.adj = [[0 for i in range(qt_vertice)] for j in range(qt_vertice)]
+		self.adj = [[] for i in range(0,qt_vertice)]
 
-		for i in xrange(0,qt_vertice):
-			aux = 0
+		for i in xrange(0,qt_vertice):			# cria lista de adjacencias
 			for j in xrange(0,qt_vertice):
 				if self.ma[i][j]!=0:
-					self.adj[i][aux]=j+1
-					aux= aux+1
+					self.adj[i].append(j+1)
 
 		self.qt_vertice = qt_vertice
 		self.qt_aresta = qt_aresta
 		self.v_origem = v_origem
 		self.v_destino = v_destino
 		self.qt_pessoas = qt_pessoas
-		self.cor = [0 for i in range(qt_vertice)]
-		self.dist = [0 for i in range(qt_vertice)]
-		self.pi = [0 for i in range(qt_vertice)]
-		for x in xrange(0,qt_vertice):				# FAZER LISTA, MAIS BONITO
-			self.cor[x] = "branco"
+		self.cor = []
+		self.dist = []
+		self.pi = []
+		for x in xrange(0,qt_vertice):		# preenche os vetores com valores padrão para iniciar a busca em largura
+			self.cor.append("branco")
 		for x in xrange(0,qt_vertice):
-			self.dist[x] = 999999999
+			self.dist.append(999999999)
 		for x in xrange(0,qt_vertice):
-			self.pi[x] = -1
+			self.pi.append(-1)
 
 def BuscaLargura(G,origem):
     Q = Queue()
@@ -90,19 +87,16 @@ def BuscaLargura(G,origem):
     G.dist[origem-1] = 0
     while (Q.size() != 0):
     	u = Q.dequeue();
-    	print(u)
     	count = 0
-    	while (G.adj[u-1][count] != 0):
-    		v = G.adj[u-1][count]
+    	for v in G.adj[u-1]:
     		if (G.cor[v-1] == "branco"):
     			G.cor[v-1] = "cinza"
     			G.dist[v-1] = G.dist[u-1]+1
     			G.pi[v-1] = u
     			Q.enqueue(v)
-    			
     		count = count + 1
     	G.cor[u-1] = "preto"
-    print G.pi
+    	print u
 
 if __name__ == "__main__":
 	ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas = ler_arquivo()
