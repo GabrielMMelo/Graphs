@@ -4,43 +4,41 @@ import sys
 import copy
 
 def ler_arquivo():
-    nome_arquivo = sys.argv[1]
-    # Armazena quantidade de vertices e aresta e armazena o
-    # conteudo do arquivo em uma matriz de adjacencia
-    arquivo = open(nome_arquivo, 'r')
+	nome_arquivo = sys.argv[1] 
+	arquivo = open(nome_arquivo, 'r')
+	lista_linhas = arquivo.readlines()
+	arquivo.close()
+	return lista_linhas 
 
-    temp = arquivo.readline().split()
-    qt_vertice = int(temp[0])
-    qt_aresta = int(temp[1])
+def verifica_lista_arquivo(pos_lista_linhas, lista_linhas):
+	
+	# Armazena quantidade de vertices e aresta e armazena o
+	# conteudo do arquivo em uma matriz de adjacencia
+	temp = lista_linhas[pos_lista_linhas].split()
+	qt_vertice = int(temp[0])
+	qt_aresta = int(temp[1])
 
-    # Inicializa a matriz = 0
-    ma = [[0 for i in range(qt_vertice)] for j in range(qt_vertice)]
+	# Inicializa a matriz = 0
+	ma = [[0 for i in range(qt_vertice)] for j in range(qt_vertice)]
 
-    temp = 0
-    for linha in arquivo:
-        temp = temp + 1
-        valores = linha.split()
-        if int(valores[0]) != 0 and int(valores[1]) != 0 and temp <= qt_aresta:
-            ma[ int(valores[0])-1 ][ int(valores[1])-1 ] = int(valores[2])
-            ma[ int(valores[1])-1 ][ int(valores[0])-1 ] = int(valores[2])
+	for linha in range(pos_lista_linhas+1, pos_lista_linhas+ qt_aresta+1):
+		valores = lista_linhas[linha].split()
+		if int(valores[0]) != 0 and int(valores[1]) != 0:
+			ma[ int(valores[0])-1 ][ int(valores[1])-1 ] = int(valores[2])
+			ma[ int(valores[1])-1 ][ int(valores[0])-1 ] = int(valores[2])
+    
+	temp = lista_linhas[pos_lista_linhas+qt_aresta+1].split()
+	v_origem = int(temp[0])
+	v_destino = int(temp[1])
+	qt_pessoas = int(temp[2])
+	
+	nova_pos = pos_lista_linhas+qt_aresta+2
+	if lista_linhas[nova_pos] == "0 0\n":
+		fim_lista = True
+	else:
+		fim_lista = False
 
-    arquivo.close()
-
-    # Armazena o vertice de origem e destino, e a quantidade
-    # de pessoas
-    arquivo = open(nome_arquivo, 'r')
-
-    lista_linhas = arquivo.readlines()
-    qt_linhas = len(lista_linhas)
-    temp = lista_linhas[qt_linhas-2].split()
-
-    v_origem = int(temp[0])
-    v_destino = int(temp[1])
-    qt_pessoas = int(temp[2])
-
-    arquivo.close()
-
-    return ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas
+	return ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas, nova_pos, fim_lista
     
 class Grafo:
     def __init__(self, ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas):
@@ -135,6 +133,10 @@ def Dijkstra(G):
 	print
 
 if __name__ == "__main__":
-    ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas = ler_arquivo()
-    g = Grafo(ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas)
-    Dijkstra(g)
+	pos_lista_linhas = 0
+	fim_lista = False
+	lista_linhas = ler_arquivo()
+	while fim_lista != True: 
+		ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas, pos_lista_linhas, fim_lista = verifica_lista_arquivo(pos_lista_linhas, lista_linhas)
+		g = Grafo(ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas)
+		Dijkstra(g)
