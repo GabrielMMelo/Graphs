@@ -89,22 +89,37 @@ def Dijkstra(G,origem):
 		u = indice_maior
 
 		G.flag[u] = False
+		adjAux = []
+		adjAux = G.adj[u]
 
-		for v in G.adj[u]:
-			
-			if u == origem - 1:
+		for i in xrange(0,len(G.adj[u])):
+			#Pega o maior vertice adjacente de maior peso de aresta
+			maior = 0
+			indice_maior
+			for v in adjAux:
+				if (G.ma[u][v-1] > maior):
+					indice_maior = v
+
+			v = indice_maior
+			#print("Vertice Atual:" + str(u+1))
+			#print ("Vertice adjacente:" + str(v))
+			adjAux.remove(v)
+			if u == (origem - 1):
     				G.dist[v-1] =  G.ma[u][v-1]
     				G.pi[v-1] = u+1
 
 			else:
-				if (G.flag[v-1]) and (G.ma[u][v-1] > G.dist[u]):
+				if (G.flag[v-1]) and (G.ma[u][v-1] >= G.dist[u]):
 					if(G.dist[v-1] < G.dist[u]):
 						G.dist[v-1] =  G.dist[u]
 						G.pi[v-1] = u+1
+						#print("Vertice adjacente atualizado com: " + str(G.dist[v-1]))
+					#print("teste 1")
 				elif (G.flag[v-1]) and (G.ma[u][v-1] < G.dist[u]):
 					if G.dist[v-1] < G.ma[u][v-1]:
 						G.dist[v-1] = G.ma[u][v-1]
 						G.pi[v-1] = u+1
+						#print("Vertice adjacente atualizado com: " + str(G.dist[v-1]))
 	print(G.qt_pessoas)
 	total = G.qt_pessoas
 	contador = 0
