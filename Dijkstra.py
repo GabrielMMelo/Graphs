@@ -40,20 +40,7 @@ def ler_arquivo():
     arquivo.close()
 
     return ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas
-
 	
-class Queue:
-    def __init__(self):
-        self.items = []
-
-    def enqueue(self, item):
-        self.items.insert(0,item)
-
-    def dequeue(self):
-        return self.items.pop()
-
-    def size(self):
-        return len(self.items)	
 
 class Grafo:
 	def __init__(self, ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas):
