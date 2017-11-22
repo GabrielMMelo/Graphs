@@ -1,4 +1,4 @@
-# Graph's problems
+# Graph's problems      (PORTUGUESE)
 
 ## Problema #1 - Problema do guia turístico
 
@@ -52,12 +52,11 @@ abaixo.
 Caso #1
 Minimo de viagens = 5
 Rota: 1 - 2 - 4 - 7
-What things you need to install the software and how to install them
+
 ```
 
 ## Problema #2 - Problema da coleta de neve
-A empresa “Quel Freddo” é especializada no serviço de coleta de neve na cidade de Yel-
-lowknife , Canadá. Devido a cortes no orçamento, a “Quel Freddo” possui exatamente uma
+A empresa “Quel Freddo” é especializada no serviço de coleta de neve na cidade de Yellowknife , Canadá. Devido a cortes no orçamento, a “Quel Freddo” possui exatamente uma
 máquina de coleta de neve. A máquina pode limpar exatamente uma faixa da pista em uma
 única passada. Sempre que ocorre uma nevasca, a máquina parte do depósito e realiza um
 tour, empilhando a neve em locais apropriados. O grande gargalo deste problema consiste
