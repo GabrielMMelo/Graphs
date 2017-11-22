@@ -136,7 +136,10 @@ if __name__ == "__main__":
 	pos_lista_linhas = 0
 	fim_lista = False
 	lista_linhas = ler_arquivo()
+	cont = 1
 	while fim_lista != True: 
 		ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas, pos_lista_linhas, fim_lista = verifica_lista_arquivo(pos_lista_linhas, lista_linhas)
 		g = Grafo(ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas)
+		print "Caso #" + str(cont)
+		cont = cont + 1
 		Dijkstra(g)
