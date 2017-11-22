@@ -149,7 +149,11 @@ def Dijkstra(G,origem):
 		aux = G.pi[aux-1]
 	caminho.append(G.v_origem)
 	caminho.reverse()
-	print ("Rota: " + str(caminho))
+	sys.stdout.write('Caminho: ')
+	for x in xrange(0,len(caminho)-1):
+		sys.stdout.write(str(caminho[x]) + '-' )
+	sys.stdout.write(str(caminho[len(caminho)-1]))	
+	#print ("Rota: " + str(caminho))
 	#print G.dist
 	#print G.pi
 
