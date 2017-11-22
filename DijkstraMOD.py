@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 
 import sys
+import copy
 
 def ler_arquivo():
     nome_arquivo = sys.argv[1]
@@ -44,11 +45,11 @@ def ler_arquivo():
 class Grafo:
     def __init__(self, ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas):
         self.ma = ma
-        self.adj = [[] for i in range(0,qt_vertice)]
+        self.adj = [[] for i in range(qt_vertice)]
 
         # cria lista de adjacencias
-        for i in xrange(0,qt_vertice):          
-            for j in xrange(0,qt_vertice):
+        for i in range(qt_vertice):          
+            for j in range(qt_vertice):
                 if self.ma[i][j]!=0:
                     self.adj[i].append(j+1)
 
@@ -58,29 +59,26 @@ class Grafo:
         self.v_destino = v_destino
         self.qt_pessoas = qt_pessoas
         self.flag = []
-        self.dist = []
-        #self.distVolta = []
+        self.valor = []
         self.pi = []
 
         # preenche os vetores com valores padrao para iniciar a busca em largura
-        for x in xrange(0,qt_vertice):      
+        for x in range(qt_vertice):      
             self.flag.append(True)
-        for x in xrange(0,qt_vertice):
-            self.dist.append(-1)
-        #for x in xrange(0,qt_vertice):
-        #    self.distVolta.append(-1)
-        for x in xrange(0,qt_vertice):
+        for x in range(qt_vertice):
+            self.valor.append(-1)
+        for x in range(qt_vertice):
             self.pi.append(-1)
 
-def Dijkstra(G,origem):
-	G.dist[origem-1] = 0
+def Dijkstra(G):
+	G.valor[G.v_origem-1] = 0
 	while (G.flag[G.v_destino-1] != False):
 
-        #Seleciona o vertice de maior distancia
+        #Seleciona o vertice de maior valorancia
 		maior = -1
 		indice = 0
 		indice_maior = 0
-		for v in G.dist:
+		for v in G.valor:
 			if v > maior and G.flag[indice]:
 				maior = v
 				indice_maior = indice
@@ -89,9 +87,9 @@ def Dijkstra(G,origem):
 
 		G.flag[u] = False
 		adjAux = []
-		adjAux = G.adj[u]
+		adjAux = copy.deepcopy(G.adj[u])
 
-		for i in xrange(0,len(G.adj[u])):
+		for i in range(len(G.adj[u])):
 			#Pega o vertice adjacente de maior peso de aresta
 			maior = 0
 			indice_maior
@@ -99,34 +97,28 @@ def Dijkstra(G,origem):
 				if (G.ma[u][v-1] > maior):
 					indice_maior = v
 			v = indice_maior
-			#print("Vertice Atual:" + str(u+1))
-			#print ("Vertice adjacente:" + str(v))
 			adjAux.remove(v)
 
 			#Caso esteja na primeira iteracao, onde estamos no vertice de origem
-			if u == (origem - 1):
-    				G.dist[v-1] =  G.ma[u][v-1]
+			if u == (G.v_origem - 1):
+    				G.valor[v-1] =  G.ma[u][v-1]
     				G.pi[v-1] = u+1
 
 			else:
 				# Se o peso para vertice adjacente for maior do que o valor do vertice atual 
-				if (G.flag[v-1]) and (G.ma[u][v-1] >= G.dist[u]):
-					if(G.dist[v-1] < G.dist[u]):
-						G.dist[v-1] =  G.dist[u]
+				if (G.flag[v-1]) and (G.ma[u][v-1] >= G.valor[u]):
+					if(G.valor[v-1] < G.valor[u]):
+						G.valor[v-1] =  G.valor[u]
 						G.pi[v-1] = u+1
-						#print("Vertice adjacente atualizado com: " + str(G.dist[v-1]))
-					#print("teste 1")
 				# Se o peso para vertice adjacente for menor do que o valor do vertice atual 
-				elif (G.flag[v-1]) and (G.ma[u][v-1] < G.dist[u]):
-					if G.dist[v-1] < G.ma[u][v-1]:
-						G.dist[v-1] = G.ma[u][v-1]
+				elif (G.flag[v-1]) and (G.ma[u][v-1] < G.valor[u]):
+					if G.valor[v-1] < G.ma[u][v-1]:
+						G.valor[v-1] = G.ma[u][v-1]
 						G.pi[v-1] = u+1
-						#print("Vertice adjacente atualizado com: " + str(G.dist[v-1]))
-	#print(G.qt_pessoas)
 	total = G.qt_pessoas
 	contador = 0
 	while total > 0:
-		total = total - (G.dist[v_destino-1]-1)
+		total = total - (G.valor[v_destino-1]-1)
 		contador = contador + 1
 	print ("Minimo de viagens = " + str(contador))
 	caminho = []
@@ -137,14 +129,12 @@ def Dijkstra(G,origem):
 	caminho.append(G.v_origem)
 	caminho.reverse()
 	sys.stdout.write('Caminho: ')
-	for x in xrange(0,len(caminho)-1):
+	for x in range(len(caminho)-1):
 		sys.stdout.write(str(caminho[x]) + '-' )
-	sys.stdout.write(str(caminho[len(caminho)-1]))	
-	#print ("Rota: " + str(caminho))
-	#print G.dist
-	#print G.pi
+	sys.stdout.write(str(caminho[len(caminho)-1]))
+	print
 
 if __name__ == "__main__":
     ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas = ler_arquivo()
     g = Grafo(ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas)
-    Dijkstra(g,g.v_origem)
+    Dijkstra(g)
