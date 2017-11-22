@@ -41,6 +41,18 @@ def ler_arquivo():
 
     return ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas
     
+class Queue:
+    def __init__(self):
+        self.items = []
+
+    def enqueue(self, item):
+        self.items.insert(0,item)
+
+    def dequeue(self):
+        return self.items.pop()
+
+    def size(self):
+        return len(self.items)	
 
 class Grafo:
     def __init__(self, ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas):
@@ -123,15 +135,23 @@ def Dijkstra(G,origem):
 						G.dist[v-1] = G.ma[u][v-1]
 						G.pi[v-1] = u+1
 						#print("Vertice adjacente atualizado com: " + str(G.dist[v-1]))
-	print(G.qt_pessoas)
+	#print(G.qt_pessoas)
 	total = G.qt_pessoas
 	contador = 0
 	while total > 0:
 		total = total - (G.dist[v_destino-1]-1)
 		contador = contador + 1
-	print ("Viagens: " + str(contador))
-	print G.dist
-	print G.pi
+	print ("Minimo de viagens = " + str(contador))
+	caminho = []
+	aux = G.v_destino
+	while aux != G.v_origem:
+		caminho.append(aux)
+		aux = G.pi[aux-1]
+	caminho.append(G.v_origem)
+	caminho.reverse()
+	print ("Rota: " + str(caminho))
+	#print G.dist
+	#print G.pi
 
 if __name__ == "__main__":
     ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas = ler_arquivo()
