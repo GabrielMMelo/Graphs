@@ -10,7 +10,7 @@ def ler_arquivo():
 	arquivo.close()
 	return lista_linhas 
 
-def verifica_lista_arquivo(pos_lista_linhas, lista_linhas):
+def gera_caso(pos_lista_linhas, lista_linhas):
 	
 	# Armazena quantidade de vertices e aresta e armazena o
 	# conteudo do arquivo em uma matriz de adjacencia
@@ -33,7 +33,7 @@ def verifica_lista_arquivo(pos_lista_linhas, lista_linhas):
 	qt_pessoas = int(temp[2])
 	
 	nova_pos = pos_lista_linhas+qt_aresta+2
-	if lista_linhas[nova_pos] == "0 0\n":
+	if lista_linhas[nova_pos] == "0 0":
 		fim_lista = True
 	else:
 		fim_lista = False
@@ -69,10 +69,9 @@ class Grafo:
             self.pi.append(-1)
 
 def Dijkstra(G):
-	G.valor[G.v_origem-1] = 0
+	G.valor[G.v_origem-1] = 9999999999
 	while (G.flag[G.v_destino-1] != False):
-
-        #Seleciona o vertice de maior valorancia
+        #Seleciona o vertice de maior .valor
 		maior = -1
 		indice = 0
 		indice_maior = 0
@@ -97,22 +96,16 @@ def Dijkstra(G):
 			v = indice_maior
 			adjAux.remove(v)
 
-			#Caso esteja na primeira iteracao, onde estamos no vertice de origem
-			if u == (G.v_origem - 1):
-    				G.valor[v-1] =  G.ma[u][v-1]
-    				G.pi[v-1] = u+1
-
-			else:
-				# Se o peso para vertice adjacente for maior do que o valor do vertice atual 
-				if (G.flag[v-1]) and (G.ma[u][v-1] >= G.valor[u]):
-					if(G.valor[v-1] < G.valor[u]):
-						G.valor[v-1] =  G.valor[u]
-						G.pi[v-1] = u+1
-				# Se o peso para vertice adjacente for menor do que o valor do vertice atual 
-				elif (G.flag[v-1]) and (G.ma[u][v-1] < G.valor[u]):
-					if G.valor[v-1] < G.ma[u][v-1]:
-						G.valor[v-1] = G.ma[u][v-1]
-						G.pi[v-1] = u+1
+			# Se o peso para vertice adjacente for MAIOR do que o .valor do vertice atual u
+			if (G.flag[v-1]) and (G.ma[u][v-1] >= G.valor[u]):
+				if(G.valor[v-1] < G.valor[u]):
+					G.valor[v-1] =  G.valor[u]
+					G.pi[v-1] = u+1
+			# Se o peso para vertice adjacente for MENOR do que o .valor do vertice atual u
+			elif (G.flag[v-1]) and (G.ma[u][v-1] < G.valor[u]):
+				if G.valor[v-1] < G.ma[u][v-1]:
+					G.valor[v-1] = G.ma[u][v-1]
+					G.pi[v-1] = u+1
 	total = G.qt_pessoas
 	contador = 0
 	while total > 0:
@@ -136,10 +129,10 @@ if __name__ == "__main__":
 	pos_lista_linhas = 0
 	fim_lista = False
 	lista_linhas = ler_arquivo()
-	cont = 1
+	caso = 1
 	while fim_lista != True: 
-		ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas, pos_lista_linhas, fim_lista = verifica_lista_arquivo(pos_lista_linhas, lista_linhas)
+		ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas, pos_lista_linhas, fim_lista = gera_caso(pos_lista_linhas, lista_linhas)
 		g = Grafo(ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas)
-		print "Caso #" + str(cont)
-		cont = cont + 1
+		print "Caso #" + str(caso)
+		caso += 1
 		Dijkstra(g)
