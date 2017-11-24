@@ -39,21 +39,7 @@ def ler_arquivo():
 
     arquivo.close()
 
-    return ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas
-
-	
-class Queue:
-    def __init__(self):
-        self.items = []
-
-    def enqueue(self, item):
-        self.items.insert(0,item)
-
-    def dequeue(self):
-        return self.items.pop()
-
-    def size(self):
-        return len(self.items)	
+    return ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas	
 
 class GrafoBFS:
 	def __init__(self, ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas):
@@ -83,44 +69,24 @@ class GrafoBFS:
 		for x in xrange(0,qt_vertice):
 			self.pi.append(-1)
 
-def BuscaLargura(G,origem):
-    Q = Queue()
-    Q.enqueue(origem);
-    G.cor[origem-1] = "cinza"
-    G.dist[origem-1] = 0
-    while (Q.size() != 0):
-    	u = Q.dequeue();
-    	count = 0
-    	for v in G.adj[u-1]:
-    		if (G.cor[v-1] == "branco"):
-    			G.cor[v-1] = "cinza"
-    			G.dist[v-1] = G.dist[u-1]+1
-    			G.pi[v-1] = u
-    			Q.enqueue(v)
-    		count = count + 1
-    	G.cor[u-1] = "preto"
-    	print u
-    print G.dist
-
 def DFS(G):
-	for v in G.adj[G.v_origem-1]:
-		if G.cor[G.v_origem-1] == "branco":
-			DFS_VISIT(G, v-1)
+	for v in range(G.qt_vertice):
+		if G.cor[v] == "branco":
+			DFS_VISIT(G, v)
 
-def DFS_VISIT(G, origem):
-	G.cor[origem] = "cinza"
-	print origem
-	for v in G.adj[origem]:
+def DFS_VISIT(G, u):
+	G.cor[u] = "cinza"
+	print u
+	for v in G.adj[u]:
 		if G.cor[v-1] == "branco":
-			G.pi[v-1] = origem
+			G.pi[v-1] = u+1
 			DFS_VISIT(G, v-1)
-		if G.cor[v-1] == "cinza":
+		if G.cor[v-1] == "cinza" and v != G.pi[u]:
 			print "ciclo"
-	G.cor[origem] = "preto"
+	G.cor[u] = "preto"
 
 
 if __name__ == "__main__":
 	ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas = ler_arquivo()
 	g = GrafoBFS(ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas)
-	#BuscaLargura(g,g.v_origem)
 	DFS(g)
