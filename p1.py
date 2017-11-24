@@ -1,104 +1,145 @@
+# Arrumar a conta de descobrir qt de caminhos
+# Fazer depuracao nos ifs do Dijkstra
+#p2: FUNCAO PARA CALCULO DAS DISTANCIAS/TEMPO
 #!/usr/bin/env python2
 
 import sys
+import copy
 
 def ler_arquivo():
-    nome_arquivo = sys.argv[1]
-    # Armazena quantidade de vertices e aresta e armazena o
-    # conteudo do arquivo em uma matriz de adjacencia
-    arquivo = open(nome_arquivo, 'r')
+	nome_arquivo = sys.argv[1] 
+	arquivo = open(nome_arquivo, 'r')
+	lista_linhas = arquivo.readlines()
+	arquivo.close()
+	return lista_linhas 
 
-    temp = arquivo.readline().split()
-    qt_vertice = int(temp[0])
-    qt_aresta = int(temp[1])
-
-    # Inicializa a matriz = 0
-    ma = [[0 for i in range(qt_vertice)] for j in range(qt_vertice)]
-
-    temp = 0
-    for linha in arquivo:
-    	temp = temp + 1
-    	valores = linha.split()
-    	if int(valores[0]) != 0 and int(valores[1]) != 0 and temp <= qt_aresta:
-    		ma[ int(valores[0])-1 ][ int(valores[1])-1 ] = int(valores[2])
-    		ma[ int(valores[1])-1 ][ int(valores[0])-1 ] = int(valores[2])
-
-    arquivo.close()
-
-    # Armazena o vertice de origem e destino, e a quantidade
-    # de pessoas
-    arquivo = open(nome_arquivo, 'r')
-
-    lista_linhas = arquivo.readlines()
-    qt_linhas = len(lista_linhas)
-    temp = lista_linhas[qt_linhas-2].split()
-
-    v_origem = int(temp[0])
-    v_destino = int(temp[1])
-    qt_pessoas = int(temp[2])
-
-    arquivo.close()
-
-    return ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas
-
+def gera_caso(pos_lista_linhas, lista_linhas):
 	
-class Queue:
-    def __init__(self):
-        self.items = []
+	# Armazena quantidade de vertices e aresta e armazena o
+	# conteudo do arquivo em uma matriz de adjacencia
+	temp = lista_linhas[pos_lista_linhas].split()
+	qt_vertice = int(temp[0])
+	qt_aresta = int(temp[1])
 
-    def enqueue(self, item):
-        self.items.insert(0,item)
+	# Inicializa a matriz = 0
+	ma = [[0 for i in range(qt_vertice)] for j in range(qt_vertice)]
 
-    def dequeue(self):
-        return self.items.pop()
+	for linha in range(pos_lista_linhas+1, pos_lista_linhas+ qt_aresta+1):
+		valores = lista_linhas[linha].split()
+		if int(valores[0]) != 0 and int(valores[1]) != 0:
+			ma[ int(valores[0])-1 ][ int(valores[1])-1 ] = int(valores[2])
+			ma[ int(valores[1])-1 ][ int(valores[0])-1 ] = int(valores[2])
+    
+	temp = lista_linhas[pos_lista_linhas+qt_aresta+1].split()
+	v_origem = int(temp[0])
+	v_destino = int(temp[1])
+	qt_pessoas = int(temp[2])
+	
+	nova_pos = pos_lista_linhas+qt_aresta+2
+	if lista_linhas[nova_pos] == "0 0":
+		fim_lista = True
+	else:
+		fim_lista = False
 
-    def size(self):
-        return len(self.items)	
+	return ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas, nova_pos, fim_lista
+    
+class Grafo:
+    def __init__(self, ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas):
+        self.ma = ma
+        self.adj = [[] for i in range(qt_vertice)]
 
-class GrafoBFS:
-	def __init__(self, ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas):
-		self.ma = ma
-		self.adj = [[] for i in range(0,qt_vertice)]
+        # cria lista de adjacencias
+        for i in range(qt_vertice):          
+            for j in range(qt_vertice):
+                if self.ma[i][j]!=0:
+                    self.adj[i].append(j+1)
 
-		for i in xrange(0,qt_vertice):			# cria lista de adjacencias
-			for j in xrange(0,qt_vertice):
-				if self.ma[i][j]!=0:
-					self.adj[i].append(j+1)
+        self.qt_vertice = qt_vertice
+        self.qt_aresta = qt_aresta
+        self.v_origem = v_origem
+        self.v_destino = v_destino
+        self.qt_pessoas = qt_pessoas
+        self.flag = []
+        self.valor = []
+        self.pi = []
 
-		self.qt_vertice = qt_vertice
-		self.qt_aresta = qt_aresta
-		self.v_origem = v_origem
-		self.v_destino = v_destino
-		self.qt_pessoas = qt_pessoas
-		self.cor = []
-		self.dist = []
-		self.pi = []
-		for x in xrange(0,qt_vertice):		# preenche os vetores com valores padrão para iniciar a busca em largura
-			self.cor.append("branco")
-		for x in xrange(0,qt_vertice):
-			self.dist.append(999999999)
-		for x in xrange(0,qt_vertice):
-			self.pi.append(-1)
+        # preenche os vetores com valores padrao para iniciar a busca em largura
+        for x in range(qt_vertice):      
+            self.flag.append(True)
+        for x in range(qt_vertice):
+            self.valor.append(-1)
+        for x in range(qt_vertice):
+            self.pi.append(-1)
 
-def BuscaLargura(G,origem):
-    Q = Queue()
-    Q.enqueue(origem);
-    G.cor[origem-1] = "cinza"
-    G.dist[origem-1] = 0
-    while (Q.size() != 0):
-    	u = Q.dequeue();
-    	count = 0
-    	for v in G.adj[u-1]:
-    		if (G.cor[v-1] == "branco"):
-    			G.cor[v-1] = "cinza"
-    			G.dist[v-1] = G.dist[u-1]+1
-    			G.pi[v-1] = u
-    			Q.enqueue(v)
-    		count = count + 1
-    	G.cor[u-1] = "preto"
-    	print u
+def Dijkstra(G):
+	G.valor[G.v_origem-1] = 9999999999
+	while (G.flag[G.v_destino-1] != False):
+        #Seleciona o vertice de maior .valor
+		maior = -1
+		indice = 0
+		indice_maior = 0
+		for v in G.valor:
+			if v > maior and G.flag[indice]:
+				maior = v
+				indice_maior = indice
+			indice = indice + 1
+		u = indice_maior
+
+		G.flag[u] = False
+		adjAux = []
+		adjAux = copy.deepcopy(G.adj[u])
+
+		for i in range(len(G.adj[u])):
+			#Pega o vertice adjacente de maior peso de aresta
+			maior = 0
+			indice_maior
+			for v in adjAux:
+				if (G.ma[u][v-1] > maior):
+					indice_maior = v
+			v = indice_maior
+			adjAux.remove(v)
+
+			# Se o peso para vertice adjacente for MAIOR do que o .valor do vertice atual u
+			if (G.flag[v-1]) and (G.ma[u][v-1] >= G.valor[u]):
+				#if(G.valor[v-1] < G.valor[u]):					#TEMOS QUE VERIFICAR A NECESSIDADE DESSE IF 
+	
+				G.valor[v-1] =  G.valor[u]
+				G.pi[v-1] = u+1
+			# Se o peso para vertice adjacente for MENOR do que o .valor do vertice atual u
+			elif (G.flag[v-1]) and (G.ma[u][v-1] < G.valor[u]):
+				#if(G.valor[v-1] < G.valor[u]):					#TEMOS QUE VERIFICAR A NECESSIDADE DESSE IF 
+
+				G.valor[v-1] = G.ma[u][v-1]
+				G.pi[v-1] = u+1
+	
+	if G.qt_pessoas%(G.valor[v_destino-1]-1) == 0:
+		print G.valor[v_destino-1]
+		viagens  = G.qt_pessoas/(G.valor[v_destino-1]-1)
+	else:
+		viagens = G.qt_pessoas/(G.valor[v_destino-1]-1) +1
+	print ("Minimo de viagens = " + str(viagens))
+	
+	caminho = []
+	aux = G.v_destino
+	while aux != G.v_origem:
+		caminho.append(aux)
+		aux = G.pi[aux-1]
+	caminho.append(G.v_origem)
+	caminho.reverse()
+	sys.stdout.write('Caminho: ')
+	for x in range(len(caminho)-1):
+		sys.stdout.write(str(caminho[x]) + '-' )
+	sys.stdout.write(str(caminho[len(caminho)-1]))
+	print
 
 if __name__ == "__main__":
-	ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas = ler_arquivo()
-	g = GrafoBFS(ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas)
-	BuscaLargura(g,g.v_origem)
+	pos_lista_linhas = 0
+	fim_lista = False
+	lista_linhas = ler_arquivo()
+	caso = 1
+	while fim_lista != True: 
+		ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas, pos_lista_linhas, fim_lista = gera_caso(pos_lista_linhas, lista_linhas)
+		g = Grafo(ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas)
+		print "Caso #" + str(caso)
+		caso += 1
+		Dijkstra(g)
