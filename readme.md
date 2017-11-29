@@ -2,14 +2,12 @@
 
 ## Problema #1 - Problema do guia turístico
 
-Um guia turístico autônomo, residente na cidade de Lavras (MG), presta serviços semanal-
-mente para grupos de turistas interessados em conhecer as belezas naturais desta região.
+Um guia turístico autônomo, residente na cidade de Lavras (MG), presta serviços semanalmente para grupos de turistas interessados em conhecer as belezas naturais desta região.
 Para economizar custos, este guia também é o condutor dos veículos utilizados nos passeios.
 As cidades são conectadas através de rodovias de mão-dupla. Para cada par de cidades,
 existe um serviço de aluguel de ônibus utilizado por este guia, a fim de completar os passeios
 pré-estabelecidos. Cada ônibus alugado pelo guia possui uma capacidade pré-estabelecida
-(incluindo o condutor). O guia turístico possui um mapa contendo as ligações entre as cida-
-des da região e a capacidade de transporte das pessoas entre as cidades (levando em conta
+(incluindo o condutor). O guia turístico possui um mapa contendo as ligações entre as cidades da região e a capacidade de transporte das pessoas entre as cidades (levando em conta
 o veículo disponível no trajeto).
 A demanda de turistas impossibilita o transporte de todos os passageiros em uma única
 viagem. Para que os custos sejam minimizados, este guia requer a você, aluno tão aplicado em
