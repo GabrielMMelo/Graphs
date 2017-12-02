@@ -10,17 +10,29 @@ class Grafo():
 	
 	def deposito_coincide_rua(self):
 		if self.deposito in self.vertices:
+			print self.deposito
 			return True
 		else:
 			return False
 
 	def mais_prox_deposito(self):
-		adj = self.vertices[self.deposito]
 		menor = 999999999
-		for i in adj:
-			if menor > calcula_dist(self.deposito, i):
-				menor = calcula_dist(self.deposito, i)
-				vproximo = i
+		vproximo = ""
+		if self.deposito_coincide_rua():
+			adj = self.vertices[self.deposito]
+			
+			for i in adj:
+				if menor > calcula_dist(self.deposito, i):
+					menor = calcula_dist(self.deposito, i)
+					vproximo = i
+		else:
+			d = G.vertices.iterkeys()
+			for i in range(len(self.vertices)-1):
+				v = d.next()
+				if menor > calcula_dist(self.deposito, v):
+					menor = calcula_dist(self.deposito, v)
+					vproximo = v
+
 		return menor, vproximo
 
 
@@ -50,7 +62,7 @@ def gera_caso(lista_linhas, pos):
 	
 	G = Grafo()
 	G.deposito = lista_linhas[1].replace('\n', '')
-
+	#G.vertices[G.deposito] = []
 	contador = 0
 
 	for linha in lista_linhas:
@@ -80,7 +92,7 @@ def gera_caso(lista_linhas, pos):
 		elif contador > 1 and len(linha.split()) == 1:
 			pos = contador
 			break
-	print G.vertices
+	#print G.vertices
 	return pos, G
 
 
