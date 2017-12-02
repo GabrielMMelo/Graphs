@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 
 import sys
+import copy
 
 def ler_arquivo():
     nome_arquivo = sys.argv[1]
@@ -70,22 +71,40 @@ class GrafoBFS:
 			self.pi.append(-1)
 
 def DFS(G):
+	global cycle
+	cycle = []
+	flag = False
 	for v in range(G.qt_vertice):
 		if G.cor[v] == "branco":
-			DFS_VISIT(G, v)
+			DFS_VISIT(G, v, flag)
 
-def DFS_VISIT(G, u):
+def DFS_VISIT(G, u, flag):
 	G.cor[u] = "cinza"
+	if flag == False:
+		cycle.append(u+1)
 	for v in G.adj[u]:
 		if G.cor[v-1] == "branco":
 			G.pi[v-1] = u+1
-			DFS_VISIT(G, v-1)
+			DFS_VISIT(G, v-1, flag)
 		if G.cor[v-1] == "cinza" and v != G.pi[u]:
-			print "cycle"
+			flag = True
 	G.cor[u] = "preto"
+
+def grafo_menos_ciclo(G):
+	g_new = copy.deepcopy(G.adj)	
+	for i in cycle:
+		for j in cycle:
+			if i in g_new[j-1]:
+				g_new[j-1].remove(i)
+	return g_new
+
+def hierholzer(G):
+	pass
 
 
 if __name__ == "__main__":
 	ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas = ler_arquivo()
 	g = GrafoBFS(ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas)
 	DFS(g)
+	print cycle
+	print grafo_menos_ciclo(g)
