@@ -70,21 +70,18 @@ class GrafoBFS:
 			self.pi.append(-1)
 
 def DFS(G):
-	global cycle
-	cycle = []
 	for v in range(G.qt_vertice):
 		if G.cor[v] == "branco":
 			DFS_VISIT(G, v)
 
 def DFS_VISIT(G, u):
 	G.cor[u] = "cinza"
-	cycle.append(u)
 	for v in G.adj[u]:
 		if G.cor[v-1] == "branco":
 			G.pi[v-1] = u+1
 			DFS_VISIT(G, v-1)
 		if G.cor[v-1] == "cinza" and v != G.pi[u]:
-			print cycle
+			print "cycle"
 	G.cor[u] = "preto"
 
 
