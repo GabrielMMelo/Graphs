@@ -1,0 +1,242 @@
+\documentclass{article}
+\usepackage{algpseudocode,algorithm}
+% Declaracoes em Português
+\algrenewcommand\algorithmicend{\textbf{fim}}
+\algrenewcommand\algorithmicdo{\textbf{fa\c{c}a}}
+\algrenewcommand\algorithmicwhile{\textbf{enquanto}}
+\algrenewcommand\algorithmicfor{\textbf{para}}
+\algrenewcommand\algorithmicif{\textbf{se}}
+\algrenewcommand\algorithmicthen{\textbf{ent\~ao}}
+\algrenewcommand\algorithmicelse{\textbf{sen\~ao}}
+\algrenewcommand\algorithmicreturn{\textbf{retorna}}
+\algrenewcommand\algorithmicfunction{\textbf{fun\c{c}\~ao}}
+
+% Rearranja os finais de cada estrutura
+\algrenewtext{EndWhile}{\algorithmicend\ \algorithmicwhile}
+\algrenewtext{EndFor}{\algorithmicend\ \algorithmicfor}
+\algrenewtext{EndIf}{\algorithmicend\ \algorithmicif}
+\algrenewtext{EndFunction}{\algorithmicend\ \algorithmicfunction}
+
+% O comando For, a seguir, retorna 'para #1 -- #2 até #3 faça'
+\algnewcommand\algorithmicto{\textbf{at\'e}}
+\algrenewtext{For}[3]%
+{\algorithmicfor\ #1 $\gets$ #2 \algorithmicto\ #3 \algorithmicdo}
+
+\usepackage[utf8]{inputenc}
+\usepackage{tcolorbox}
+\usepackage{tabularx}
+\usepackage{booktabs,tabularx,rotating}% para tabelas
+
+\usepackage{listings}
+\lstset{
+  language=C++,
+  basicstyle=\ttfamily\small, 
+  keywordstyle=\color{blue}, 
+  stringstyle=\color{verde}, 
+  commentstyle=\color{red}, 
+  extendedchars=true, 
+  showspaces=false, 
+  showstringspaces=false, 
+  %numbers=left,
+ % numberstyle=\tiny,
+  breaklines=true, 
+  backgroundcolor=\color{gray!10},
+  breakautoindent=true, 
+  captionpos=t,
+  xleftmargin=0pt,
+}
+
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+
+\title{\centering\huge{\textsf{\textbf{Algoritmos em Grafos} \\
+Trabalho Prático} \rom{1}}}
+\author{\Large{\textsf{Bruno Queiroz Santos}} \\ \Large{\textsf{Gabriel Marques de Melo}}}
+\date{}
+
+% example taken from 
+% http://www.guitex.org/home/images/doc/GuideGuIT/introingtikz.pdf
+
+\usepackage {tikz}
+\usetikzlibrary {positioning}
+%\usepackage {xcolor}
+\definecolor {processblue}{cmyk}{0.96,0,0,0}
+
+
+\begin {document}
+
+\maketitle
+\vspace{60pt}
+\begin {center}
+\begin {tikzpicture}[-,shorten >=1pt,auto,node distance=3cm,
+  thick,main node/.style={circle,fill=gray!20,draw,font=\sffamily\Large\bfseries}]
+  
+\node[main node] (A){$1$};
+\node[main node] (B) [above right=of A] {$2$};
+\node[main node] (C) [below right =of A] {$3$};
+\node[main node] (D) [below right =of B] {$4$};
+\node[main node] (E) [above right =of D] {$5$};
+\node[main node] (F) [below right =of D] {$6$};
+\node[main node] (G) [below right =of E] {$7$};
+
+\path [every node/.style={font=\sffamily\small}]
+(A) edge [above,red] node [above = 0.15cm] {30} (B)
+(A) edge [above] node[below =0.15 cm] {$15$} (C)
+(A) edge [above] node[above =0.15 cm] {$10$} (D)
+(D) edge [above,red] node[above =0.15 cm] {$35$} (G)
+(B) edge [above,red] node[above =0.15 cm] {$25$} (D)
+(B) edge [above] node[above =0.15 cm] {$60$} (E)
+(C) edge [above] node[above =0.15 cm] {$40$} (D)
+(C) edge [above] node[below =0.15 cm] {$20$} (F)
+(F) edge [above] node[below =0.15 cm] {$25$} (G)
+(E) edge [above] node[above =0.15 cm] {$20$} (G);
+%\path (A) edge [bend right = -15] node[below =0.15 cm] {$1/2$} (C);
+%\path (A) edge [bend left =25] node[above] {$1/4$} (B);
+%\path (B) edge [bend left =15] node[below =0.15 cm] {$1/2$} (A);
+%\path (C) edge [bend left =15] node[below =0.15 cm] {$1/2$} (B);
+%\path (B) edge [bend right = -25] node[below =0.15 cm] {$1/2$} (C);
+\end{tikzpicture}
+
+\vspace{110pt}
+{\centering \Large{\textsf{UFLA \\ Novembro de 2017}}}
+\thispagestyle{empty}
+\end{center}
+
+
+
+\newpage
+\section{Algoritmos Implementados}
+
+\begin{algorithm}
+\caption{Problema do guia turístico}
+\begin{algorithmic}[1]
+\State {arquivoLista $\gets$ \textit{arquivo.txt}} 
+
+\While {arquivoPosicao != EOF}
+    \State{D\textbf{,} arquivoPosicao  $\gets$ \textit{geraCaso}(arquivoPosicao)}
+    \State G $\gets$ \textit{Grafo}(D)
+    \State{\textit{DijkstraModificado}(G)}
+    \State{\textit{imprime} caso\textbf{,} numViagens\textbf{,} caminho }
+\EndWhile
+\Function{DijkstraModificado}{G}
+    \While{G.flag[verticeDestino] $=$ \textit{FALSE} }
+      \State{u $\gets$ \textit{MAX}(G.valor)}
+      \For{i}{1}{\textit{TAM}(G.adj[u])}
+        \If{G.flag[v] \textbf{\&\&} G.ma[u][v] $>=$ G.valor[u] }
+            \State{G.valor[v] =  G.valor[u]}
+        	\State{G.$\pi$[v] = u}
+        \Else
+            \State{G.valor[v] = G.ma[u][v]}
+            \State{G.$\pi$[v] = u}
+        \EndIf
+      \EndFor
+    \EndWhile
+  %\If {$x < 0$}
+   % \State \Return $-x$
+ % \Else
+  %  \State \Return $x$
+  %\EndIf
+\EndFunction
+%\For{i}{1}{n} 
+%  \State {$A[i] \gets i + 1$} \Comment{Preenche o vetor} 
+%\EndFor
+ % \While {$i \mei n$}
+  %  \State $i \gets i + 1$
+  %\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Problema da coleta de neve}
+\begin{algorithmic}[1]
+\State {arquivoLista $\gets$ \textit{arquivo.txt}} 
+
+\end{algorithmic}
+\end{algorithm}
+
+\section{Resultados}
+    Serão mostrados os resultados de \textbf{1} (uma) situação - \textit{conjunto de casos} - que cada um dos problemas \textbf{\textit{P1}} e \textbf{\textit{P2}} resolva. Para cada situação serão mostrados, respectivamente, o arquivo de entrada que contém os casos e sua tabela de resultados.
+\subsection{P1}
+\begin{center} \textbf{\textit{Arquivo\_de\_Entrada\_P1.txt}} \end{center}
+       \begin{lstlisting} 
+7 10
+1 2 30
+1 3 15
+1 4 10
+2 4 25
+2 5 60
+3 4 40
+3 6 20
+4 7 35
+5 7 20
+6 7 30
+1 7 99
+0 0
+
+        
+\end{lstlisting}
+
+\begin{table}[!ht]
+\centering
+\caption{Resultados P1 \label{Resultados-P1}}
+\begin{tabular}{l l l l}
+   \toprule
+    \textsf{Caso}    & \textsf{Caminho} & \textsf{Nº de Viagens} &  \textsf{Tempo de execução (s)}\\
+    
+    \midrule \midrule
+    1      & 2$\rightarrow$4$\rightarrow$5$\rightarrow$6$\rightarrow$7   & 22 & 20  \\
+    
+    2 & 2.4 & 22 & 35 \\
+    
+    
+    3 & 2.4 & 20 & 38  \\
+    
+    4 & 2.4/5 & 20/40 & 70/70
+    \\[1ex]
+    \bottomrule
+    \end{tabular}
+     
+\end{table}
+
+\subsection{P2}
+
+\begin{center} \textbf{\textit{Arquivo\_de\_Entrada\_P2.txt}} \end{center}
+       \begin{lstlisting} 
+1
+
+500 120
+0 0 20 20
+0 0 10000 10000
+20 20 10000 10000
+5000 -10000 5000 10000
+5000 10000 10000 10000
+12000 5000 0 0
+
+        
+\end{lstlisting}
+
+\begin{table}[!ht]
+\centering
+\caption{Resultados P2 \label{Resultados-P2}}
+\begin{tabular}{l l l l}
+   \toprule
+    \textsf{Caso}    & \textsf{Tempo da Coleta (hh:mm)} & \textsf{Tempo de execução (s)}\\
+    
+    \midrule \midrule
+    1      & 2$\rightarrow$4$\rightarrow$5$\rightarrow$6$\rightarrow$7   & 22   \\
+    
+    2 & 2.4 & 22 \\
+    
+    
+    3 & 2.4 & 20 \\
+    
+    4 & 2.4/5 & 20/40 
+    \\[1ex]
+    \bottomrule
+    \end{tabular}
+     
+\end{table}
+
+
+\end{document}
