@@ -13,7 +13,7 @@ class Grafo():
 			return True
 		else:
 			return False
-			
+
 	def mais_prox_deposito(self):
 		adj = self.vertices[self.deposito]
 		menor = 999999999
@@ -66,14 +66,21 @@ def gera_caso(lista_linhas, pos):
 				dictAux = G.vertices[aux2] 
 				dictAux.append(aux)
 				G.vertices[aux] = [aux2]
+				
 			elif aux2 not in G.vertices:
 				dictAux = G.vertices[aux] 
 				dictAux.append(aux2)
 				G.vertices[aux2] = [aux]
+			else:
+				dictAux = G.vertices[aux] 
+				dictAux.append(aux2)
+				dictAux = G.vertices[aux2] 
+				dictAux.append(aux)
+
 		elif contador > 1 and len(linha.split()) == 1:
 			pos = contador
 			break
-	print pos
+	print G.vertices
 	return pos, G
 
 
