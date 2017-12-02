@@ -56,10 +56,6 @@ def calcula_dist(v1,v2):
 	return math.sqrt((x2-x1)**2+(y2-y1)**2)
 
 def gera_caso(lista_linhas, pos):
-	nome_arquivo = sys.argv[1]
-	arquivo = open(nome_arquivo, 'r')
-	lista_linhas = arquivo.readlines()
-	
 	G = Grafo()
 	G.deposito = lista_linhas[1].replace('\n', '')
 	#G.vertices[G.deposito] = []
