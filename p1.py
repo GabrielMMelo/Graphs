@@ -5,6 +5,7 @@
 
 import sys
 import copy
+import time
 
 def ler_arquivo():
 	nome_arquivo = sys.argv[1] 
@@ -36,11 +37,13 @@ def gera_caso(pos_lista_linhas, lista_linhas):
 	qt_pessoas = int(temp[2])
 	
 	nova_pos = pos_lista_linhas+qt_aresta+2
-	if lista_linhas[nova_pos] == "0 0":
+
+	fim = lista_linhas[nova_pos].split()
+	if len(fim) == 2 and fim[0] == "0" and fim[1] == "0":
 		fim_lista = True
 	else:
 		fim_lista = False
-
+		
 	return ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas, nova_pos, fim_lista
     
 class Grafo:
@@ -135,11 +138,15 @@ def Dijkstra(G):
 if __name__ == "__main__":
 	pos_lista_linhas = 0
 	fim_lista = False
-	lista_linhas = ler_arquivo()
 	caso = 1
+	init = time.time()
+	lista_linhas = ler_arquivo()
+
 	while fim_lista != True: 
 		ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas, pos_lista_linhas, fim_lista = gera_caso(pos_lista_linhas, lista_linhas)
 		g = Grafo(ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas)
 		print "Caso #" + str(caso)
 		caso += 1
 		Dijkstra(g)
+	fim = time.time()
+	print fim - init 

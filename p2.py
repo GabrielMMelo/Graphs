@@ -10,7 +10,6 @@ class Grafo():
 	
 	def deposito_coincide_rua(self):
 		if self.deposito in self.vertices:
-			print self.deposito
 			return True
 		else:
 			return False
@@ -22,6 +21,7 @@ class Grafo():
 			adj = self.vertices[self.deposito]
 			
 			for i in adj:
+
 				if menor > calcula_dist(self.deposito, i):
 					menor = calcula_dist(self.deposito, i)
 					vproximo = i
@@ -56,12 +56,9 @@ def calcula_dist(v1,v2):
 	return math.sqrt((x2-x1)**2+(y2-y1)**2)
 
 def gera_caso(lista_linhas, pos):
-	nome_arquivo = sys.argv[1]
-	arquivo = open(nome_arquivo, 'r')
-	lista_linhas = arquivo.readlines()
 	
 	G = Grafo()
-	G.deposito = lista_linhas[1].replace('\n', '')
+	G.deposito = lista_linhas[2].replace('\n', '')
 	#G.vertices[G.deposito] = []
 	contador = 0
 
@@ -72,27 +69,27 @@ def gera_caso(lista_linhas, pos):
 			aux = temp[0] + " " + temp[1] # junta 1a coordenada
 			aux2 = temp[2] + " " + temp[3] # junta 2a coordenada
 			if aux not in G.vertices and aux2 not in G.vertices:
-				G.vertices[aux] = [aux2]
-				G.vertices[aux2] = [aux]
+				G.vertices[aux] = [[aux2,20]]
+				G.vertices[aux2] = [[aux,20]]
 			elif aux not in G.vertices:
 				dictAux = G.vertices[aux2] 
-				dictAux.append(aux)
-				G.vertices[aux] = [aux2]
+				dictAux.append([aux,20])
+				G.vertices[aux] = [[aux2,20]]
 				
 			elif aux2 not in G.vertices:
 				dictAux = G.vertices[aux] 
-				dictAux.append(aux2)
-				G.vertices[aux2] = [aux]
+				dictAux.append([aux2,20])
+				G.vertices[aux2] = [[aux,20]]
 			else:
 				dictAux = G.vertices[aux] 
-				dictAux.append(aux2)
+				dictAux.append([aux2,20])
 				dictAux = G.vertices[aux2] 
-				dictAux.append(aux)
+				dictAux.append([aux,20])
 
 		elif contador > 1 and len(linha.split()) == 1:
 			pos = contador
 			break
-	#print G.vertices
+	print G.vertices
 	return pos, G
 
 
