@@ -2,6 +2,7 @@
 
 import sys
 import math
+import datetime
 
 class Grafo():
 	def __init__(self):
@@ -89,9 +90,30 @@ def gera_caso(lista_linhas, pos):
 		elif contador > 1 and len(linha.split()) == 1:
 			pos = contador
 			break
-	print G.vertices
 	return pos, G
 
+# guarda as distancias das coordenadas adjacentes no dict
+def armazena_dist(G):
+	for chave, val in G.vertices.items():
+		for c in val:
+			c[1] = calcula_dist(chave, c[0])
+
+# soma todas as distancias 
+def soma_dists(G):
+	armazena_dist(G)
+	soma = 0
+	for chave, val in G.vertices.items():
+		for c in val:
+			soma += c[1]
+	return soma
+
+def p2(G):
+	# se for eureliano
+	if G.deposito_coincide_rua:
+		seg = soma_dists(G) / (20000.0/3600.0)
+		print str(datetime.timedelta(seconds=seg))
+	else:
+		pass
 
 	#cria apelido para as coordenadas
 if __name__ == "__main__":
@@ -102,3 +124,4 @@ if __name__ == "__main__":
 	#	print "TRUE"
 	#print calcula_dist("0 0","1 1")
 	print G.mais_prox_deposito()
+	print p2(G)
