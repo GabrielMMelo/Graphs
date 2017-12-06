@@ -70,41 +70,69 @@ class GrafoBFS:
 		for x in xrange(0,qt_vertice):
 			self.pi.append(-1)
 
-def DFS(G):
+def DFS(adj):
 	global cycle
 	cycle = []
+	cor = []
+	for x in range(len(adj)):		
+		cor.append("branco")
+	pi = []
+	for x in range(len(adj)):
+		pi.append(-1)
 	flag = False
-	for v in range(G.qt_vertice):
-		if G.cor[v] == "branco":
-			DFS_VISIT(G, v, flag)
+	for v in range(len(adj)):
+		if cor[v] == "branco" and len(adj[v]) > 0:
+			DFS_VISIT(adj, v, flag, cor, pi)
 
-def DFS_VISIT(G, u, flag):
-	G.cor[u] = "cinza"
+def DFS_VISIT(adj, u, flag, cor, pi):
+	cor[u] = "cinza"
 	if flag == False:
 		cycle.append(u+1)
-	for v in G.adj[u]:
-		if G.cor[v-1] == "branco":
-			G.pi[v-1] = u+1
-			DFS_VISIT(G, v-1, flag)
-		if G.cor[v-1] == "cinza" and v != G.pi[u]:
+	for v in adj[u]:
+		if cor[v-1] == "branco":
+			pi[v-1] = u+1
+			DFS_VISIT(adj, v-1, flag, cor, pi)
+		if cor[v-1] == "cinza" and v != pi[u]:
 			flag = True
-	G.cor[u] = "preto"
+	cor[u] = "preto"
 
 def grafo_menos_ciclo(G):
-	g_new = copy.deepcopy(G.adj)	
+	G1 = G
 	for i in cycle:
 		for j in cycle:
-			if i in g_new[j-1]:
-				g_new[j-1].remove(i)
-	return g_new
+			if i in G1.adj[j-1]:
+				G1.adj[j-1].remove(i)
+	return G1
 
-def hierholzer(G):
-	pass
+def hierholzer(adj):
+	new_cycle = []
+	DFS(adj)
+	print cycle
+	new_cycle += cycle
+	adj1 = copy.deepcopy(adj)
+	
+	#remove cycle do grafo
+	for i in cycle:
+		for j in cycle:
+			if i in adj1[j-1]:
+				adj1[j-1].remove(i)
+
+	for v in adj1:
+		while v != []:
+			DFS(adj1)
+			print cycle
+			new_cycle += cycle
+			#remove cycle do grafo
+			for i in cycle:
+				for j in cycle:
+					if i in adj1[j-1]:
+						adj1[j-1].remove(i)
+	return new_cycle
 
 
 if __name__ == "__main__":
 	ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas = ler_arquivo()
 	g = GrafoBFS(ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas)
-	DFS(g)
-	print cycle
-	print grafo_menos_ciclo(g)
+	print g.adj
+	DFS(g.adj)
+	#print hierholzer(g.adj)
