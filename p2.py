@@ -3,6 +3,7 @@
 import sys
 import math
 import datetime
+import copy
 
 class Grafo():
 	def __init__(self):
@@ -70,26 +71,27 @@ def gera_caso(lista_linhas, pos):
 			aux = temp[0] + " " + temp[1] # junta 1a coordenada
 			aux2 = temp[2] + " " + temp[3] # junta 2a coordenada
 			if aux not in G.vertices and aux2 not in G.vertices:
-				G.vertices[aux] = [[aux2,20]]
-				G.vertices[aux2] = [[aux,20]]
+				G.vertices[aux] = [[aux2,0]]
+				G.vertices[aux2] = [[aux,0]]
 			elif aux not in G.vertices:
 				dictAux = G.vertices[aux2] 
-				dictAux.append([aux,20])
-				G.vertices[aux] = [[aux2,20]]
+				dictAux.append([aux,0])
+				G.vertices[aux] = [[aux2,0]]
 				
 			elif aux2 not in G.vertices:
 				dictAux = G.vertices[aux] 
-				dictAux.append([aux2,20])
-				G.vertices[aux2] = [[aux,20]]
+				dictAux.append([aux2,0])
+				G.vertices[aux2] = [[aux,0]]
 			else:
 				dictAux = G.vertices[aux] 
-				dictAux.append([aux2,20])
+				dictAux.append([aux2,0])
 				dictAux = G.vertices[aux2] 
-				dictAux.append([aux,20])
+				dictAux.append([aux,0])
 
 		elif contador > 1 and len(linha.split()) == 1:
 			pos = contador
 			break
+		armazena_dist(G)
 	return pos, G
 
 # guarda as distancias das coordenadas adjacentes no dict
@@ -100,22 +102,48 @@ def armazena_dist(G):
 
 # soma todas as distancias 
 def soma_dists(G):
-	armazena_dist(G)
 	soma = 0
 	for chave, val in G.vertices.items():
 		for c in val:
 			soma += c[1]
 	return soma
 
+def DFS(vertices):
+	global cycle
+	cycle = []
+	dict_aux = copy.deepcopy(vertices)
+	for i in dict_aux.keys():		
+		dict_aux[i].append("branco")
+	for i in dict_aux.keys():
+		dict_aux[i].append(-1)
+	flag = False
+	for chave in dict_aux.keys():
+		if dict_aux[chave][len(dict_aux[chave])-2] == "branco" and len(dict_aux[chave])-2 > 0:
+			DFS_VISIT(dict_aux, chave, flag)
+
+def DFS_VISIT(vertices, chave, flag):
+	vertices[chave][len(vertices[chave])-2] = "cinza"
+	if flag == False:
+		cycle.append(chave)
+	for v in range(len(vertices[chave])-2):
+		if vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "branco":
+			vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] = chave
+			DFS_VISIT(vertices, vertices[chave][v][0], flag)
+		if vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "cinza" \
+		and vertices[chave][v][0] != vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ]:
+			flag = True
+		print vertices[chave][v][0], vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1] 
+
+	vertices[chave][len(vertices[chave])-2] = "preto"
+
 def p2(G):
 	# se for eureliano
 	if G.deposito_coincide_rua:
 		seg = soma_dists(G) / (20000.0/3600.0)
-		print str(datetime.timedelta(seconds=seg))
+		print str(datetime.timedelta(seconds=int(seg)))
 	else:
 		pass
 
-	#cria apelido para as coordenadas
 if __name__ == "__main__":
 	pos = 0
 	lista_linhas = ler_arquivo()
@@ -123,5 +151,4 @@ if __name__ == "__main__":
 	#if G.deposito_coincide_rua():
 	#	print "TRUE"
 	#print calcula_dist("0 0","1 1")
-	print G.mais_prox_deposito()
-	print p2(G)
+	DFS(G.vertices)
