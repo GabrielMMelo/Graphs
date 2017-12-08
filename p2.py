@@ -69,7 +69,15 @@ class Grafo():
 							novaKey = str(int(intersecao[0])) + " " + str(int(intersecao[1]))
 							if not novaKey  in self.vertices:
 								# TODO: PENSAR NOS ADJACENTES DA INTERSECCAO
-								self.vertices[novaKey]
+								self.vertices[novaKey] = [[split1[0]+ " " + split1[1], 1],[split2[0]+ " " + split2[1],1],[split3[0]+ " " + split3[1],1],[split4[0]+ " " + split4[1],1]]
+								self.vertices[split1[0]+ " " + split1[1]] #.remove(split2[0]+ " " + split2[1])
+								self.vertices[split1[0]+ " " + split1[1]] #.add([novaKey,1])
+								self.vertices[split2[0]+ " " + split2[1]] #.remove(split1[0]+ " " + split1[1])
+								self.vertices[split2[0]+ " " + split2[1]] #.add([novaKey,1])
+								self.vertices[split3[0]+ " " + split3[1]] #.remove(split4[0]+ " " + split4[1])
+								self.vertices[split3[0]+ " " + split3[1]] #.add([novaKey,1])
+								self.vertices[split4[0]+ " " + split4[1]] #.remove(split3[0]+ " " + split3[1])
+								self.vertices[split4[0]+ " " + split4[1]] #.add([novaKey,1])
 							else:
 								print "tem"
 							#self.vertice.add[str(intersecao)]
@@ -145,7 +153,7 @@ def gera_caso(lista_linhas, pos):
 			pos = contador
 			break
 		armazena_dist(G)
-		G.resolve_intersecoes()
+#		G.resolve_intersecoes()
 	return pos, G
 
 # guarda as distancias das coordenadas adjacentes no dict
@@ -239,6 +247,7 @@ if __name__ == "__main__":
 	pos = 0
 	lista_linhas = ler_arquivo()
 	pos, G = gera_caso(lista_linhas, pos)
+	print G.vertices
 	#if G.deposito_coincide_rua():
 	#	print "TRUE"
 	#print calcula_dist("0 0","1 1")
