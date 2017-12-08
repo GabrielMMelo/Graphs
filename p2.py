@@ -60,7 +60,7 @@ def calcula_dist(v1,v2):
 def gera_caso(lista_linhas, pos):
 	
 	G = Grafo()
-	G.deposito = lista_linhas[2].replace('\n', '')
+	G.deposito = lista_linhas[1].replace('\n', '')
 	#G.vertices[G.deposito] = []
 	contador = 0
 
@@ -108,33 +108,77 @@ def soma_dists(G):
 			soma += c[1]
 	return soma
 
-def DFS(vertices):
+def DFS(G):
 	global cycle
 	cycle = []
-	dict_aux = copy.deepcopy(vertices)
+	dict_aux = copy.deepcopy(G.vertices)
 	for i in dict_aux.keys():		
 		dict_aux[i].append("branco")
 	for i in dict_aux.keys():
 		dict_aux[i].append(-1)
 	flag = False
+	dict_aux[G.deposito][len(dict_aux[G.deposito])-1] = -2
+	DFS_VISIT(dict_aux, G.deposito, flag)
 	for chave in dict_aux.keys():
 		if dict_aux[chave][len(dict_aux[chave])-2] == "branco" and len(dict_aux[chave])-2 > 0:
 			DFS_VISIT(dict_aux, chave, flag)
 
 def DFS_VISIT(vertices, chave, flag):
 	vertices[chave][len(vertices[chave])-2] = "cinza"
-	if flag == False:
+	if flag == True:
 		cycle.append(chave)
+
 	for v in range(len(vertices[chave])-2):
+		# Se a COR do vertice V adjacente a CHAVE for == BRANCO
 		if vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "branco":
+			#print vertices[chave][v][0]
+			# PI do vertice V adjacente a CHAVE = CHAVE
 			vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] = chave
 			DFS_VISIT(vertices, vertices[chave][v][0], flag)
+		# Se a COR do vertice V adjacente a CHAVE for == cinza AND o PI do adjacente V for != CHAVE
 		if vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "cinza" \
-		and vertices[chave][v][0] != vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ]:
+		and chave != vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ]  \
+		and -2 != vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ]:
 			flag = True
-		print vertices[chave][v][0], vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1] 
-
+			#print vertices
+			print "CHAVE: " + str(chave) + " / pi do V2: " + str(vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1]) + " / V2: " + str(vertices[chave][v][0])
+			#print flag
+		
 	vertices[chave][len(vertices[chave])-2] = "preto"
+
+def dijkstra(vertices, origem, destino):
+	dict_aux = copy.deepcopy(vertices)
+	for i in dict_aux.keys():
+		dict_aux[i].append(True)
+	for i in dict_aux.keys():
+		dict_aux[i].append(999999999)
+	for i in dict_aux.keys():
+		dict_aux[i].append(-1)
+	print dict_aux
+	dict_aux[origem][len(dict_aux[origem])-2] = 0
+	while(dict_aux[destino][len(dict_aux[destino])-3] != False):
+		menor = 999999999
+
+		#pega menor distancia
+		for k in dict_aux.keys():
+			if dict_aux[k][len(dict_aux[k])-2] < menor and dict_aux[k][len(dict_aux[k])-3]:
+				menor = dict_aux[k][len(dict_aux[k])-2]
+				k_menor = k
+		u = k_menor
+		dict_aux[u][len(dict_aux[u])-3] = False
+		for v in range(len(dict_aux[u])-3):
+			if dict_aux[dict_aux[u][v][0]][len(dict_aux[dict_aux[u][v][0]])-3] and \
+			dict_aux[dict_aux[u][v][0]][len(dict_aux[dict_aux[u][v][0]])-2] >   \
+			dict_aux[u][len(dict_aux[u])-2] + dict_aux[u][v][1]:
+				dict_aux[dict_aux[u][v][0]][len(dict_aux[dict_aux[u][v][0]])-2] = \
+				dict_aux[u][len(dict_aux[u])-2] + dict_aux[u][v][1]
+				dict_aux[dict_aux[u][v][0]][len(dict_aux[dict_aux[u][v][0]])-1] = dict_aux[u][len(dict_aux[u])-1]
+
+	for k in dict_aux.keys():
+		print dict_aux[k][len(dict_aux[k])-2]
+	for k in dict_aux.keys():
+		print dict_aux[k][len(dict_aux[k])-1]
+
 
 def p2(G):
 	# se for eureliano
@@ -151,4 +195,7 @@ if __name__ == "__main__":
 	#if G.deposito_coincide_rua():
 	#	print "TRUE"
 	#print calcula_dist("0 0","1 1")
-	DFS(G.vertices)
+	#DFS(G.vertices)
+	dijkstra(G.vertices,'0 0', '5000 -10000')
+	DFS(G)
+	print cycle
