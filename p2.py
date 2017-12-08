@@ -149,6 +149,35 @@ def DFS_VISIT(vertices, chave, flag, inicio):
 		
 	vertices[chave][len(vertices[chave])-2] = "preto"
 
+def hierholzer(G):
+	new_cycle = []
+	DFS(G)
+	print cycle
+	new_cycle += cycle
+	vertices_aux = copy.deepcopy(G.vertices)
+
+	
+	cont = 0
+	for i in cycle:
+		#print i
+		auxSoma = 0
+		for j in range(len(vertices_aux[i])):
+			if cont == len(cycle)-2 and j == len(vertices_aux[i])-1:
+				if vertices_aux[i][j-auxSoma][0] == cycle[cont+1]:
+					vertices_aux[i].pop(j)
+					auxSoma +=1
+				break
+
+			elif vertices_aux[i][j-auxSoma][0] == cycle[cont+1]:
+				vertices_aux[i].pop(j)
+				auxSoma +=1
+				print vertices_aux
+		cont += 1
+
+	print vertices_aux
+	return new_cycle
+
+
 def p2(G):
 	# se for eureliano
 	if G.deposito_coincide_rua:
@@ -164,5 +193,5 @@ if __name__ == "__main__":
 	#if G.deposito_coincide_rua():
 	#	print "TRUE"
 	#print calcula_dist("0 0","1 1")
-	DFS(G)
+	hierholzer(G)
 	print cycle
