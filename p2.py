@@ -1,5 +1,12 @@
 #!/usr/bin/env python2
 
+# Leitura e geracao de multiplos casos ()
+# DFS (X)
+# Djikstra ()
+# Intersecao ()
+# Calculo do segundo mais proximo ()
+# Calcular a distancia somente apos tratamento da intersecao ()
+
 import sys
 import math
 import datetime
@@ -51,6 +58,7 @@ class Grafo():
 					split3 = k.split()
 					for l in self.vertices[k]:
 						split4 = l[0].split()
+						#TODO: PENSAR ESSAS CONDICOES
 #						if split1[0] != split3[0] and split1[0] != split3[1] and split1[1] != split3[0] and split1[1] != split3[1] \
 #						or split1[0] == split3[0] and split1[1] != split3[1] or split1[1] == split3[0] and split1[1] != split3[1] \
 #						or split1[0] == split3[1] and split1[1] != split3[0] or split1[1] == split3[1] and split1[0] != split3[0] \
@@ -67,8 +75,7 @@ class Grafo():
 						intersecao = self.get_intersecao(int(split1[0]),int(split1[1]),int(split2[0]),int(split2[1]),int(split3[0]),int(split3[1]),int(split4[0]),int(split4[1]))
 						if intersecao:
 							novaKey = str(int(intersecao[0])) + " " + str(int(intersecao[1]))
-							if not novaKey  in self.vertices:
-								# TODO: PENSAR NOS ADJACENTES DA INTERSECCAO
+							if not novaKey in self.vertices:
 								self.vertices[novaKey] = [[split1[0]+ " " + split1[1], 1],[split2[0]+ " " + split2[1],1],[split3[0]+ " " + split3[1],1],[split4[0]+ " " + split4[1],1]]
 								self.vertices[split1[0]+ " " + split1[1]] #.remove(split2[0]+ " " + split2[1])
 								self.vertices[split1[0]+ " " + split1[1]] #.add([novaKey,1])
@@ -78,9 +85,6 @@ class Grafo():
 								self.vertices[split3[0]+ " " + split3[1]] #.add([novaKey,1])
 								self.vertices[split4[0]+ " " + split4[1]] #.remove(split3[0]+ " " + split3[1])
 								self.vertices[split4[0]+ " " + split4[1]] #.add([novaKey,1])
-							else:
-								print "tem"
-							#self.vertice.add[str(intersecao)]
 
 						else:
 							print "nao achou"
@@ -89,11 +93,11 @@ class Grafo():
 
 	#Retorna as coordenadas de intersecao entre dois segmentos de reta
 	def get_intersecao(self,k1,k2,l1,l2,m1,m2,n1,n2):
-		det = float((n1 - m1) * (l2 - k2)  -  (n2 - m2) * (l1 - k1))
-		if (det == 0.0):
+		d = float((n1 - m1) * (l2 - k2)  -  (n2 - m2) * (l1 - k1))
+		if (d == 0.0):
 			return False
-		s = ((n1 - m1) * (m2 - k2) - (n2 - m2) * (m1 - k1))/ det
-		t = ((l1 - k1) * (m2 - k2) - (l2 - k2) * (m1 - k1))/ det
+		s = ((n1 - m1) * (m2 - k2) - (n2 - m2) * (m1 - k1)) / d
+		t = ((l1 - k1) * (m2 - k2) - (l2 - k2) * (m1 - k1)) / d
 		x = k1 + (l1-k1)*s
 		y = k2 + (l2-k2)*s
 		return x,y
@@ -119,7 +123,7 @@ def calcula_dist(v1,v2):
 	return math.sqrt((x2-x1)**2+(y2-y1)**2)
 
 def gera_caso(lista_linhas, pos):
-	
+	#TODO: SUPORTAR MULTIPLOS CASOS
 	G = Grafo()
 	G.deposito = lista_linhas[2].replace('\n', '')
 	#G.vertices[G.deposito] = []
@@ -191,6 +195,7 @@ def DFS_VISIT(vertices, chave, flag, inicio):
 	cycle.append(chave)
 
 	for v in range(len(vertices[chave])-2):
+		# Se o V for o INICIO e o PI de CHAVE nao eh INICIO
 		if vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] != -1 and \
 		vertices[ chave ][ len(vertices[chave])-1 ] != inicio and vertices[chave][v][0] == inicio:
 			cycle.append(inicio)
@@ -206,6 +211,7 @@ def DFS_VISIT(vertices, chave, flag, inicio):
 		if flag:
 			cycle.append(chave)
 
+	# Forma o caminho inverso da busca, gerando o ciclo completo
 	if vertices[chave][ len(vertices[chave])-1 ] != -2:
 		cycle.append(vertices[chave][ len(vertices[chave])-1 ])
 		
@@ -244,6 +250,7 @@ def p2(G):
 		pass
 
 if __name__ == "__main__":
+	#TODO: FAZER FOR PARA OS CASOS
 	pos = 0
 	lista_linhas = ler_arquivo()
 	pos, G = gera_caso(lista_linhas, pos)
