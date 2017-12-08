@@ -153,31 +153,39 @@ def dijkstra(vertices, origem, destino):
 	for i in dict_aux.keys():
 		dict_aux[i].append(999999999)
 	for i in dict_aux.keys():
-		dict_aux[i].append(-1)
-	print dict_aux
+		dict_aux[i].append('-1')
+
+	#dist = 0
 	dict_aux[origem][len(dict_aux[origem])-2] = 0
+
+	# enquanto a flag for false
 	while(dict_aux[destino][len(dict_aux[destino])-3] != False):
 		menor = 999999999
 
-		#pega menor distancia
+		#pega menor distancia e o indice
 		for k in dict_aux.keys():
 			if dict_aux[k][len(dict_aux[k])-2] < menor and dict_aux[k][len(dict_aux[k])-3]:
 				menor = dict_aux[k][len(dict_aux[k])-2]
 				k_menor = k
 		u = k_menor
+
+		#flag = False
 		dict_aux[u][len(dict_aux[u])-3] = False
+
+		# percorre os vertices adjacentes
 		for v in range(len(dict_aux[u])-3):
 			if dict_aux[dict_aux[u][v][0]][len(dict_aux[dict_aux[u][v][0]])-3] and \
 			dict_aux[dict_aux[u][v][0]][len(dict_aux[dict_aux[u][v][0]])-2] >   \
 			dict_aux[u][len(dict_aux[u])-2] + dict_aux[u][v][1]:
 				dict_aux[dict_aux[u][v][0]][len(dict_aux[dict_aux[u][v][0]])-2] = \
 				dict_aux[u][len(dict_aux[u])-2] + dict_aux[u][v][1]
-				dict_aux[dict_aux[u][v][0]][len(dict_aux[dict_aux[u][v][0]])-1] = dict_aux[u][len(dict_aux[u])-1]
+				dict_aux[dict_aux[u][v][0]][len(dict_aux[dict_aux[u][v][0]])-1] = u
 
 	for k in dict_aux.keys():
 		print dict_aux[k][len(dict_aux[k])-2]
 	for k in dict_aux.keys():
 		print dict_aux[k][len(dict_aux[k])-1]
+	print dict_aux
 
 
 def p2(G):
@@ -196,6 +204,6 @@ if __name__ == "__main__":
 	#	print "TRUE"
 	#print calcula_dist("0 0","1 1")
 	#DFS(G.vertices)
-	dijkstra(G.vertices,'0 0', '5000 -10000')
+	dijkstra(G.vertices,'5000 -10000', '10000 10000')
 	DFS(G)
 	print cycle
