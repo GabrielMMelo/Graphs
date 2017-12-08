@@ -37,6 +37,59 @@ class Grafo():
 
 		return menor, vproximo
 
+	def resolve_intersecoes(self):
+		cont = 1
+		for i in self.vertices.keys():
+			split1 = i.split()
+			for j in self.vertices[i]:
+				split2 = j[0].split()
+				cont_aux = cont
+				for k in self.vertices.keys():
+					if cont_aux>0:
+						cont_aux -= 1
+						continue
+					split3 = k.split()
+					for l in self.vertices[k]:
+						split4 = l[0].split()
+#						if split1[0] != split3[0] and split1[0] != split3[1] and split1[1] != split3[0] and split1[1] != split3[1] \
+#						or split1[0] == split3[0] and split1[1] != split3[1] or split1[1] == split3[0] and split1[1] != split3[1] \
+#						or split1[0] == split3[1] and split1[1] != split3[0] or split1[1] == split3[1] and split1[0] != split3[0] \
+#						and split1[0] != split4[0] and split1[0] != split4[1] and split1[1] != split4[0] and split1[1] != split4[1] \
+#						or split1[0] == split4[0] and split1[1] != split4[1] or split1[1] == split4[0] and split1[1] != split4[1] \
+#						or split1[0] == split4[1] and split1[1] != split4[0] or split1[1] == split4[1] and split1[0] != split4[0] \
+#						and split2[0] != split3[0] and split2[0] != split3[1] and split2[1] != split3[0] and split2[1] != split3[1] \
+#						or split2[0] == split3[0] and split2[1] != split3[1] or split2[1] == split3[0] and split2[1] != split3[1] \
+#						or split2[0] == split3[1] and split2[1] != split3[0] or split2[1] == split3[1] and split2[0] != split3[0] \
+#						and split2[0] != split4[0] and split2[0] != split4[1] and split2[1] != split4[0] and split2[1] != split4[1] \
+#						or split2[0] == split4[0] and split2[1] != split4[1] or split2[1] == split4[0] and split2[1] != split4[1] \
+#						or split2[0] == split4[1] and split2[1] != split4[0] or split2[1] == split4[1] and split2[0] != split4[0]:
+						intersecao = []
+						intersecao = self.get_intersecao(int(split1[0]),int(split1[1]),int(split2[0]),int(split2[1]),int(split3[0]),int(split3[1]),int(split4[0]),int(split4[1]))
+						if intersecao:
+							novaKey = str(int(intersecao[0])) + " " + str(int(intersecao[1]))
+							if not novaKey  in self.vertices:
+								# TODO: PENSAR NOS ADJACENTES DA INTERSECCAO
+								self.vertices[novaKey]
+							else:
+								print "tem"
+							#self.vertice.add[str(intersecao)]
+
+						else:
+							print "nao achou"
+			cont += 1
+		return self
+
+	#Retorna as coordenadas de intersecao entre dois segmentos de reta
+	def get_intersecao(self,k1,k2,l1,l2,m1,m2,n1,n2):
+		det = float((n1 - m1) * (l2 - k2)  -  (n2 - m2) * (l1 - k1))
+		if (det == 0.0):
+			return False
+		s = ((n1 - m1) * (m2 - k2) - (n2 - m2) * (m1 - k1))/ det
+		t = ((l1 - k1) * (m2 - k2) - (l2 - k2) * (m1 - k1))/ det
+		x = k1 + (l1-k1)*s
+		y = k2 + (l2-k2)*s
+		return x,y
+
 
 def ler_arquivo():
 	nome_arquivo = sys.argv[1]
@@ -92,6 +145,7 @@ def gera_caso(lista_linhas, pos):
 			pos = contador
 			break
 		armazena_dist(G)
+		G.resolve_intersecoes()
 	return pos, G
 
 # guarda as distancias das coordenadas adjacentes no dict
@@ -155,11 +209,8 @@ def hierholzer(G):
 	print cycle
 	new_cycle += cycle
 	vertices_aux = copy.deepcopy(G.vertices)
-
-	
 	cont = 0
 	for i in cycle:
-		#print i
 		auxSoma = 0
 		for j in range(len(vertices_aux[i])):
 			if cont == len(cycle)-2 and j == len(vertices_aux[i])-1:
@@ -167,13 +218,11 @@ def hierholzer(G):
 					vertices_aux[i].pop(j)
 					auxSoma +=1
 				break
-
 			elif vertices_aux[i][j-auxSoma][0] == cycle[cont+1]:
 				vertices_aux[i].pop(j)
 				auxSoma +=1
 				print vertices_aux
 		cont += 1
-
 	print vertices_aux
 	return new_cycle
 
@@ -193,5 +242,5 @@ if __name__ == "__main__":
 	#if G.deposito_coincide_rua():
 	#	print "TRUE"
 	#print calcula_dist("0 0","1 1")
-	hierholzer(G)
-	print cycle
+	#hierholzer(G)
+	#print cycle
