@@ -60,7 +60,7 @@ def calcula_dist(v1,v2):
 def gera_caso(lista_linhas, pos):
 	
 	G = Grafo()
-	G.deposito = lista_linhas[1].replace('\n', '')
+	G.deposito = lista_linhas[2].replace('\n', '')
 	#G.vertices[G.deposito] = []
 	contador = 0
 
@@ -118,31 +118,34 @@ def DFS(G):
 		dict_aux[i].append(-1)
 	flag = False
 	dict_aux[G.deposito][len(dict_aux[G.deposito])-1] = -2
-	DFS_VISIT(dict_aux, G.deposito, flag)
+	DFS_VISIT(dict_aux, G.deposito, flag, G.deposito)
 	for chave in dict_aux.keys():
 		if dict_aux[chave][len(dict_aux[chave])-2] == "branco" and len(dict_aux[chave])-2 > 0:
-			DFS_VISIT(dict_aux, chave, flag)
+			DFS_VISIT(dict_aux, chave, flag, G.deposito)
+#	cycle.append(G.deposito)
 
-def DFS_VISIT(vertices, chave, flag):
+def DFS_VISIT(vertices, chave, flag, inicio):
 	vertices[chave][len(vertices[chave])-2] = "cinza"
-	if flag == True:
-		cycle.append(chave)
+	cycle.append(chave)
 
 	for v in range(len(vertices[chave])-2):
+		if vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] != -1 and \
+		vertices[ chave ][ len(vertices[chave])-1 ] != inicio and vertices[chave][v][0] == inicio:
+			cycle.append(inicio)
+			flag = True
+
 		# Se a COR do vertice V adjacente a CHAVE for == BRANCO
 		if vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "branco":
-			#print vertices[chave][v][0]
 			# PI do vertice V adjacente a CHAVE = CHAVE
 			vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] = chave
-			DFS_VISIT(vertices, vertices[chave][v][0], flag)
-		# Se a COR do vertice V adjacente a CHAVE for == cinza AND o PI do adjacente V for != CHAVE
-		if vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "cinza" \
-		and chave != vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ]  \
-		and -2 != vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ]:
-			flag = True
-			#print vertices
-			print "CHAVE: " + str(chave) + " / pi do V2: " + str(vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1]) + " / V2: " + str(vertices[chave][v][0])
-			#print flag
+			DFS_VISIT(vertices, vertices[chave][v][0], flag, inicio)
+			continue
+
+		if flag:
+			cycle.append(chave)
+
+	if vertices[chave][ len(vertices[chave])-1 ] != -2:
+		cycle.append(vertices[chave][ len(vertices[chave])-1 ])
 		
 	vertices[chave][len(vertices[chave])-2] = "preto"
 
