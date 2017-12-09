@@ -6,7 +6,9 @@
 # Intersecao (X)
 # Calculo do segundo mais proximo (X)
 # Calcular a distancia somente apos tratamento da intersecao (X)
-# Add vertices no grafo  ()
+# Add vertices no grafo  (X)
+# ARREDONDAR
+# LINHA EM BRANCA FINAL DE CADA CASO 
 
 import sys
 import math
@@ -31,15 +33,17 @@ class Grafo():
 		v1proximo = ""
 		v2proximo = ""
 
+
 		d = self.vertices.iterkeys()
-		for i in range(len(self.vertices)-1):
+		for i in range(len(self.vertices)):
 			v = d.next()
 			if menor1 > calcula_dist(self.deposito, v):
 				menor1 = calcula_dist(self.deposito, v)
 				v1proximo = v
-		d = self.vertices.iterkeys()
-		for i in range(len(self.vertices)-1):
-			v = d.next()
+		
+		a = self.vertices.iterkeys()
+		for i in range(len(self.vertices.keys())):
+			v = a.next()
 			if menor2 > calcula_dist(self.deposito, v) and v != v1proximo:
 				menor2 = calcula_dist(self.deposito, v)
 				v2proximo = v
@@ -163,9 +167,10 @@ def gera_caso(lista_linhas, pos):
 		elif i > pos and len(lista_linhas[i].split()) == 2:
 			pos = i
 			break
-		G.dois_mais_prox_deposito()
-		G.resolve_intersecoes()
 		armazena_dist(G)
+		G.resolve_intersecoes()
+	G.dois_mais_prox_deposito()	
+	
 	return pos, G
 
 # guarda as distancias das coordenadas adjacentes no dict
@@ -280,7 +285,7 @@ def djikstra(vertices, origem, destino):
 	while x != origem:
 		caminho.append(x)
 		x = dict_aux[x][len(dict_aux[x])-1]
-	#caminho.append(origem)
+	caminho.append(origem)
 	caminho = caminho[::-1]
 	return caminho
 
@@ -296,47 +301,59 @@ def calcula_caminho(G, caminho):
 				soma_caminho += G.vertices[caminho[i]][j][1]
 	return soma_caminho
 
+def segundos_hora(seg):
+	minuto = seg / 60.0
+	aux = minuto - int(minuto)
+	if aux != 0:
+		minuto = int(minuto)+1
+	hora = minuto / 60
+	minuto = minuto % 60
+
+	return str(hora)+":"+str(minuto)
+
 def p2(G):
 	# se for eureliano
 	if G.deposito_coincide_rua():
 		DFS(G)
-		print cycle
 		aux1 = calcula_caminho(G, cycle)
-		seg = aux1 / (20000/3600)			
-		print str(datetime.timedelta(seconds=int(seg)))
+		seg = aux1 / (20000.0/3600.0)			
+		#print str(datetime.timedelta(seconds=int(seg)))
+		print segundos_hora(seg)
 	else:
 		DFS(G)
 		c1 =calcula_dist(G.deposito, G.mais_perto)
+
 		G.vertices[G.deposito] = [[G.mais_perto, c1]]
+		
 		c2 =calcula_dist(G.seg_mais_perto, G.deposito)
 		G.vertices[G.seg_mais_perto].append([G.deposito, c2])
 		caminho_dij = djikstra(G.vertices,G.mais_perto, G.seg_mais_perto)
 
 		aux1 = calcula_caminho(G, cycle)
 		aux2 = calcula_caminho(G, caminho_dij)
+		
 
-		r1 = aux1 + c1 + c2 / (20000/3600) 
-		r2 = aux2 / (50000/3600)
+		r1 = (aux1 + c1 + c2) / (20000.0/3600.0) 
+		
+		r2 = aux2 / (50000.0/3600.0)
+
+
 		resultado = r1 + r2
-		print str(datetime.timedelta(seconds=int(resultado)))
+		print segundos_hora(resultado)
 
 if __name__ == "__main__":
-	#TODO: FAZER FOR PARA OS CASOS
 	pos = 0
 	lista_linhas, caso = ler_arquivo()
 	for i in range(int(caso)):
 		pos, G = gera_caso(lista_linhas, pos)
-		#print p2(G)
+		p2(G)
+		if i != int(caso)-1:
+			print ""
 		#print G.deposito
-	x = calcula_dist("0 0", "5000 5000")
-	x += calcula_dist("5000 5000", "5000 10000")
-	x += calcula_dist("5000 5000", "10000 10000")
-	x += calcula_dist("5000 10000", "10000 10000")
-	x += calcula_dist("5000 5000", "5000 -10000")
-	x = x*2
-	x =  x / (20000/3600)
-	print str(datetime.timedelta(seconds=int(x)))
-
+	#x = calcula_dist("5000 5000", "0 1") / (50000.0/3600.0)
+	#x += calcula_dist(G.mais_perto, "5000 5000") / (20000.0/3600.0)
+	#x += 1.0 / (20000.0/3600.0)
+	#print str(datetime.timedelta(seconds=int(x)))
 	#print G.dois_mais_prox_deposito()
 	#DFS(G)
 	#print cycle
