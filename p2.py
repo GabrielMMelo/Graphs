@@ -17,7 +17,8 @@ class Grafo():
 	def __init__(self):
 		self.vertices = {}
 		self.deposito = ""
-	
+		self.mais_perto = ""
+		self.seg_mais_perto = ""	
 	def deposito_coincide_rua(self):
 		if self.deposito in self.vertices:
 			return True
@@ -30,13 +31,13 @@ class Grafo():
 		v1proximo = ""
 		v2proximo = ""
 
-		d = G.vertices.iterkeys()
+		d = self.vertices.iterkeys()
 		for i in range(len(self.vertices)-1):
 			v = d.next()
 			if menor1 > calcula_dist(self.deposito, v):
 				menor1 = calcula_dist(self.deposito, v)
 				v1proximo = v
-		d = G.vertices.iterkeys()
+		d = self.vertices.iterkeys()
 		for i in range(len(self.vertices)-1):
 			v = d.next()
 			if menor2 > calcula_dist(self.deposito, v) and v != v1proximo:
@@ -162,6 +163,7 @@ def gera_caso(lista_linhas, pos):
 		elif i > pos and len(lista_linhas[i].split()) == 2:
 			pos = i
 			break
+		G.dois_mais_prox_deposito()
 		G.resolve_intersecoes()
 		armazena_dist(G)
 	return pos, G
@@ -189,12 +191,16 @@ def DFS(G):
 	for i in dict_aux.keys():
 		dict_aux[i].append(-1)
 	flag = False
-	dict_aux[G.deposito][len(dict_aux[G.deposito])-1] = -2
-	DFS_VISIT(dict_aux, G.deposito, flag, G.deposito)
+	if G.deposito_coincide_rua():
+		dict_aux[G.deposito][len(dict_aux[G.deposito])-1] = -2
+		DFS_VISIT(dict_aux, G.deposito, flag, G.deposito)
+	else:	
+		dict_aux[G.mais_perto][len(dict_aux[G.mais_perto])-1] = -2
+		DFS_VISIT(dict_aux, G.mais_perto, flag, G.mais_perto)
+	
 	for chave in dict_aux.keys():
 		if dict_aux[chave][len(dict_aux[chave])-2] == "branco" and len(dict_aux[chave])-2 > 0:
-			DFS_VISIT(dict_aux, 
-				chave, flag, G.deposito)
+			DFS_VISIT(dict_aux, chave, flag, G.deposito)
 #	cycle.append(G.deposito)
 
 def DFS_VISIT(vertices, chave, flag, inicio):
@@ -205,15 +211,25 @@ def DFS_VISIT(vertices, chave, flag, inicio):
 		# Se o V for o INICIO e o PI de CHAVE nao eh INICIO
 		if vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] != -1 and \
 		vertices[ chave ][ len(vertices[chave])-1 ] != inicio and vertices[chave][v][0] == inicio:
-			cycle.append(inicio)
-			flag = True
+				cycle.append(inicio)
+				flag = True
+
+		elif vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "vermelho":
+			vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] = "cinza"
+			cycle.append(vertices[chave][v][0])
+			cycle.append(chave)
+
 
 		# Se a COR do vertice V adjacente a CHAVE for == BRANCO
-		if vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "branco":
+		elif vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "branco":
 			# PI do vertice V adjacente a CHAVE = CHAVE
 			vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] = chave
 			DFS_VISIT(vertices, vertices[chave][v][0], flag, inicio)
 			continue
+		
+		elif vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] != -1 and \
+		vertices[ chave ][ len(vertices[chave])-1 ] != inicio:
+			vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] = "vermelho"
 
 		if flag:
 			cycle.append(chave)
@@ -223,29 +239,6 @@ def DFS_VISIT(vertices, chave, flag, inicio):
 		cycle.append(vertices[chave][ len(vertices[chave])-1 ])
 		
 	vertices[chave][len(vertices[chave])-2] = "preto"
-
-def hierholzer(G):
-	new_cycle = []
-	DFS(G)
-	print cycle
-	new_cycle += cycle
-	vertices_aux = copy.deepcopy(G.vertices)
-	cont = 0
-	for i in cycle:
-		auxSoma = 0
-		for j in range(len(vertices_aux[i])):
-			if cont == len(cycle)-2 and j == len(vertices_aux[i])-1:
-				if vertices_aux[i][j-auxSoma][0] == cycle[cont+1]:
-					vertices_aux[i].pop(j)
-					auxSoma +=1
-				break
-			elif vertices_aux[i][j-auxSoma][0] == cycle[cont+1]:
-				vertices_aux[i].pop(j)
-				auxSoma +=1
-				print vertices_aux
-		cont += 1
-	print vertices_aux
-	return new_cycle
 
 def djikstra(vertices, origem, destino):
 	dict_aux = copy.deepcopy(vertices)
@@ -305,16 +298,27 @@ def calcula_caminho(G, caminho):
 
 def p2(G):
 	# se for eureliano
-	if G.deposito_coincide_rua:
-		seg = soma_dists(G) / (20000.0/3600.0)			#  ARRUMAR
-		print  soma_dists(G)
+	if G.deposito_coincide_rua():
+		DFS(G)
+		print cycle
+		aux1 = calcula_caminho(G, cycle)
+		seg = aux1 / (20000/3600)			
 		print str(datetime.timedelta(seconds=int(seg)))
 	else:
-		DFS(G.vertices)
-		G.vertices[G.deposito] = G.mais_perto
-		G.vertices[G.seg_mais_perto].append(G.deposito)
-		caminha_dij = djikstra(G,G.mais_perto, G.seg_mais_perto)
+		DFS(G)
+		c1 =calcula_dist(G.deposito, G.mais_perto)
+		G.vertices[G.deposito] = [[G.mais_perto, c1]]
+		c2 =calcula_dist(G.seg_mais_perto, G.deposito)
+		G.vertices[G.seg_mais_perto].append([G.deposito, c2])
+		caminho_dij = djikstra(G.vertices,G.mais_perto, G.seg_mais_perto)
 
+		aux1 = calcula_caminho(G, cycle)
+		aux2 = calcula_caminho(G, caminho_dij)
+
+		r1 = aux1 + c1 + c2 / (20000/3600) 
+		r2 = aux2 / (50000/3600)
+		resultado = r1 + r2
+		print str(datetime.timedelta(seconds=int(resultado)))
 
 if __name__ == "__main__":
 	#TODO: FAZER FOR PARA OS CASOS
@@ -322,13 +326,22 @@ if __name__ == "__main__":
 	lista_linhas, caso = ler_arquivo()
 	for i in range(int(caso)):
 		pos, G = gera_caso(lista_linhas, pos)
-		#print G.vertices
+		#print p2(G)
 		#print G.deposito
+	x = calcula_dist("0 0", "5000 5000")
+	x += calcula_dist("5000 5000", "5000 10000")
+	x += calcula_dist("5000 5000", "10000 10000")
+	x += calcula_dist("5000 10000", "10000 10000")
+	x += calcula_dist("5000 5000", "5000 -10000")
+	x = x*2
+	x =  x / (20000/3600)
+	print str(datetime.timedelta(seconds=int(x)))
+
 	#print G.dois_mais_prox_deposito()
-	DFS(G)
-	print cycle
-	p2(G)
-	print calcula_caminho(G,cycle)
+	#DFS(G)
+	#print cycle
+	#p2(G)
+	#print calcula_caminho(G,cycle)
 	#djikstra(G.vertices, '0 0', '5000 -10000')
 	#if G.deposito_coincide_rua():
 	#	print "TRUE"
