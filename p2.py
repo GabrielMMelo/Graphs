@@ -139,6 +139,7 @@ def calcula_dist(v1,v2):
 
 def gera_caso(lista_linhas, pos):
 	G = Grafo()
+	print "oi1"
 	G.deposito = lista_linhas[pos].replace('\n', '')
 
 	for i in range(pos, len(lista_linhas)):
@@ -168,9 +169,12 @@ def gera_caso(lista_linhas, pos):
 			pos = i
 			break
 		armazena_dist(G)
+		print "bct"
 		G.resolve_intersecoes()
+		print  "bct1"
+	print "carai"
 	G.dois_mais_prox_deposito()	
-	
+	print "oi"
 	return pos, G
 
 # guarda as distancias das coordenadas adjacentes no dict
@@ -342,6 +346,7 @@ def p2(G):
 		print segundos_hora(resultado)
 
 if __name__ == "__main__":
+	print "666"
 	pos = 0
 	lista_linhas, caso = ler_arquivo()
 	for i in range(int(caso)):
