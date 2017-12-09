@@ -6,6 +6,7 @@
 # Intersecao ()
 # Calculo do segundo mais proximo (X)
 # Calcular a distancia somente apos tratamento da intersecao ()
+# Add vertices no grafo 
 
 import sys
 import math
@@ -126,12 +127,10 @@ def calcula_dist(v1,v2):
 def gera_caso(lista_linhas, pos):
 	#TODO: SUPORTAR MULTIPLOS CASOS
 	G = Grafo()
-	G.deposito = lista_linhas[2].replace('\n', '')
+	G.deposito = lista_linhas[pos].replace('\n', '')
 	#G.vertices[G.deposito] = []
-	contador = 0
 
-	for i in range(pos, len(lista_linhas)-1):
-		contador += 1
+	for i in range(pos, len(lista_linhas)):
 		if len(lista_linhas[i].split()) == 4: # testa se eh uma linha do arquivo com coordenadas
 			temp = lista_linhas[i].split()
 			aux = temp[0] + " " + temp[1] # junta 1a coordenada
@@ -154,11 +153,11 @@ def gera_caso(lista_linhas, pos):
 				dictAux = G.vertices[aux2] 
 				dictAux.append([aux,0])
 
-		elif contador > 1 and len(lista_linhas[i].split()) == 2:
-			pos = contador
+		elif i > pos and len(lista_linhas[i].split()) == 2:
+			pos = i
 			break
 		armazena_dist(G)
-#		G.resolve_intersecoes()
+		G.resolve_intersecoes()
 	return pos, G
 
 # guarda as distancias das coordenadas adjacentes no dict
@@ -188,7 +187,8 @@ def DFS(G):
 	DFS_VISIT(dict_aux, G.deposito, flag, G.deposito)
 	for chave in dict_aux.keys():
 		if dict_aux[chave][len(dict_aux[chave])-2] == "branco" and len(dict_aux[chave])-2 > 0:
-			DFS_VISIT(dict_aux, chave, flag, G.deposito)
+			DFS_VISIT(dict_aux, 
+				chave, flag, G.deposito)
 #	cycle.append(G.deposito)
 
 def DFS_VISIT(vertices, chave, flag, inicio):
@@ -241,7 +241,7 @@ def hierholzer(G):
 	print vertices_aux
 	return new_cycle
 
-def dijkstra(vertices, origem, destino):
+def djikstra(vertices, origem, destino):
 	dict_aux = copy.deepcopy(vertices)
 	for i in dict_aux.keys():
 		dict_aux[i].append(True)
@@ -275,18 +275,23 @@ def dijkstra(vertices, origem, destino):
 				dict_aux[dict_aux[u][v][0]][len(dict_aux[dict_aux[u][v][0]])-2] = \
 				dict_aux[u][len(dict_aux[u])-2] + dict_aux[u][v][1]
 				dict_aux[dict_aux[u][v][0]][len(dict_aux[dict_aux[u][v][0]])-1] = u
+	
+	x = destino
+	caminho = []
+	while x != origem:
+		caminho.append(x)
+		x = dict_aux[x][len(dict_aux[x])-1]
+	caminho.append(origem)
+	caminho = caminho[::-1]
+	print caminho
 
-	for k in dict_aux.keys():
-		print dict_aux[k][len(dict_aux[k])-2]
-	for k in dict_aux.keys():
-		print dict_aux[k][len(dict_aux[k])-1]
-	print dict_aux
+	#return dict_aux[destino][len(dict_aux[destino])-1]
 
 
 def p2(G):
 	# se for eureliano
 	if G.deposito_coincide_rua:
-		seg = soma_dists(G) / (20000.0/3600.0)
+		seg = soma_dists(G) / (20000.0/3600.0)			#  ARRUMAR
 		print str(datetime.timedelta(seconds=int(seg)))
 	else:
 		pass
@@ -297,8 +302,12 @@ if __name__ == "__main__":
 	lista_linhas, caso = ler_arquivo()
 	for i in range(int(caso)):
 		pos, G = gera_caso(lista_linhas, pos)
-		print G.vertices
-	print G.dois_mais_prox_deposito()
+	#	print G.vertices
+#		print G.deposito
+	#print G.dois_mais_prox_deposito()
+	#DFS(G)
+	#djikstra(G.vertices,"0 0", "25000 5000")
+	#print cycle
 	#dijkstra(G.vertices, '0 0', '0 0')
 	#if G.deposito_coincide_rua():
 	#	print "TRUE"
