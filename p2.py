@@ -77,19 +77,49 @@ class Grafo():
 							novaKey = str(int(intersecao[0])) + " " + str(int(intersecao[1]))
 							#print novaKey
 							if not novaKey in self.vertices:
-								print "eh nois"
+							#	print "eh nois"
 								self.vertices[novaKey] = [[split1[0]+ " " + split1[1], 1],[split2[0]+ " " + split2[1],1],[split3[0]+ " " + split3[1],1],[split4[0]+ " " + split4[1],1]]
-								print self.vertices[novaKey]
-								self.vertices[split1[0]+ " " + split1[1]] #.remove(split2[0]+ " " + split2[1])
-								self.vertices[split1[0]+ " " + split1[1]] #.add([novaKey,1])
-								self.vertices[split2[0]+ " " + split2[1]] #.remove(split1[0]+ " " + split1[1])
-								self.vertices[split2[0]+ " " + split2[1]] #.add([novaKey,1])
-								self.vertices[split3[0]+ " " + split3[1]] #.remove(split4[0]+ " " + split4[1])
-								self.vertices[split3[0]+ " " + split3[1]] #.add([novaKey,1])
-								self.vertices[split4[0]+ " " + split4[1]] #.remove(split3[0]+ " " + split3[1])
-								self.vertices[split4[0]+ " " + split4[1]] #.add([novaKey,1])
+								#print self.vertices[novaKey]
+								
+								contador = 0
+								self.vertices[split1[0]+ " " + split1[1]].append([novaKey,0])
+								for x in self.vertices[split1[0]+ " " + split1[1]]:
+									if x[0] == split2[0]+ " " + split2[1]:
+										del self.vertices[split1[0]+ " " + split1[1]][contador]									
+									contador += 1
+
+								contador = 0
+								self.vertices[split2[0]+ " " + split2[1]].append([novaKey,0])
+								for x in self.vertices[split2[0]+ " " + split2[1]]:
+									if x[0] == split1[0]+ " " + split1[1]:
+										del self.vertices[split2[0]+ " " + split2[1]][contador]									
+									contador += 1
+
+								contador = 0
+								self.vertices[split3[0]+ " " + split3[1]].append([novaKey,0])
+								for x in self.vertices[split3[0]+ " " + split3[1]]:
+									if x[0] == split4[0]+ " " + split4[1]:
+										del self.vertices[split3[0]+ " " + split3[1]][contador]									
+									contador += 1
+
+								contador = 0
+								self.vertices[split4[0]+ " " + split4[1]].append([novaKey,0])
+								for x in self.vertices[split4[0]+ " " + split4[1]]:
+									if x[0] == split3[0]+ " " + split3[1]:
+										del self.vertices[split4[0]+ " " + split4[1]][contador]									
+									contador += 1
+
+#								self.vertices[split1[0]+ " " + split1[1]] #.remove(split2[0]+ " " + split2[1])
+#								self.vertices[split1[0]+ " " + split1[1]] #.add([novaKey,1])
+#								self.vertices[split2[0]+ " " + split2[1]] #.remove(split1[0]+ " " + split1[1])
+#								self.vertices[split2[0]+ " " + split2[1]] #.add([novaKey,1])
+#								self.vertices[split3[0]+ " " + split3[1]] #.remove(split4[0]+ " " + split4[1])
+#								self.vertices[split3[0]+ " " + split3[1]] #.add([novaKey,1])
+#								self.vertices[split4[0]+ " " + split4[1]] #.remove(split3[0]+ " " + split3[1])
+#								self.vertices[split4[0]+ " " + split4[1]] #.add([novaKey,1])
 
 			cont += 1
+		#print self.vertices
 		return self
 
 	#Retorna as coordenadas de intersecao entre dois segmentos de reta
@@ -303,7 +333,7 @@ if __name__ == "__main__":
 	lista_linhas, caso = ler_arquivo()
 	for i in range(int(caso)):
 		pos, G = gera_caso(lista_linhas, pos)
-	#	print G.vertices
+		print G.vertices
 #		print G.deposito
 	#print G.dois_mais_prox_deposito()
 	#DFS(G)
