@@ -3,10 +3,10 @@
 # Leitura e geracao de multiplos casos (X)
 # DFS (X)
 # Djikstra (X)
-# Intersecao ()
+# Intersecao (X)
 # Calculo do segundo mais proximo (X)
-# Calcular a distancia somente apos tratamento da intersecao ()
-# Add vertices no grafo 
+# Calcular a distancia somente apos tratamento da intersecao (X)
+# Add vertices no grafo  ()
 
 import sys
 import math
@@ -42,7 +42,8 @@ class Grafo():
 			if menor2 > calcula_dist(self.deposito, v) and v != v1proximo:
 				menor2 = calcula_dist(self.deposito, v)
 				v2proximo = v
-		return menor1, v1proximo, menor2, v2proximo
+		self.mais_perto = v1proximo
+		self.seg_mais_perto = v2proximo
 
 	def resolve_intersecoes(self):
 		cont = 1
@@ -58,19 +59,6 @@ class Grafo():
 					split3 = k.split()
 					for l in self.vertices[k]:
 						split4 = l[0].split()
-						#TODO: PENSAR ESSAS CONDICOES
-#						if split1[0] != split3[0] and split1[0] != split3[1] and split1[1] != split3[0] and split1[1] != split3[1] \
-#						or split1[0] == split3[0] and split1[1] != split3[1] or split1[1] == split3[0] and split1[1] != split3[1] \
-#						or split1[0] == split3[1] and split1[1] != split3[0] or split1[1] == split3[1] and split1[0] != split3[0] \
-#						and split1[0] != split4[0] and split1[0] != split4[1] and split1[1] != split4[0] and split1[1] != split4[1] \
-#						or split1[0] == split4[0] and split1[1] != split4[1] or split1[1] == split4[0] and split1[1] != split4[1] \
-#						or split1[0] == split4[1] and split1[1] != split4[0] or split1[1] == split4[1] and split1[0] != split4[0] \
-#						and split2[0] != split3[0] and split2[0] != split3[1] and split2[1] != split3[0] and split2[1] != split3[1] \
-#						or split2[0] == split3[0] and split2[1] != split3[1] or split2[1] == split3[0] and split2[1] != split3[1] \
-#						or split2[0] == split3[1] and split2[1] != split3[0] or split2[1] == split3[1] and split2[0] != split3[0] \
-#						and split2[0] != split4[0] and split2[0] != split4[1] and split2[1] != split4[0] and split2[1] != split4[1] \
-#						or split2[0] == split4[0] and split2[1] != split4[1] or split2[1] == split4[0] and split2[1] != split4[1] \
-#						or split2[0] == split4[1] and split2[1] != split4[0] or split2[1] == split4[1] and split2[0] != split4[0]:
 						intersecao = []
 						intersecao = self.get_intersecao(int(split1[0]),int(split1[1]),int(split2[0]),int(split2[1]),int(split3[0]),int(split3[1]),int(split4[0]),int(split4[1]))
 						if intersecao:
@@ -108,18 +96,7 @@ class Grafo():
 									if x[0] == split3[0]+ " " + split3[1]:
 										del self.vertices[split4[0]+ " " + split4[1]][contador]									
 									contador += 1
-
-#								self.vertices[split1[0]+ " " + split1[1]] #.remove(split2[0]+ " " + split2[1])
-#								self.vertices[split1[0]+ " " + split1[1]] #.add([novaKey,1])
-#								self.vertices[split2[0]+ " " + split2[1]] #.remove(split1[0]+ " " + split1[1])
-#								self.vertices[split2[0]+ " " + split2[1]] #.add([novaKey,1])
-#								self.vertices[split3[0]+ " " + split3[1]] #.remove(split4[0]+ " " + split4[1])
-#								self.vertices[split3[0]+ " " + split3[1]] #.add([novaKey,1])
-#								self.vertices[split4[0]+ " " + split4[1]] #.remove(split3[0]+ " " + split3[1])
-#								self.vertices[split4[0]+ " " + split4[1]] #.add([novaKey,1])
-
 			cont += 1
-		#print self.vertices
 		return self
 
 	#Retorna as coordenadas de intersecao entre dois segmentos de reta
@@ -156,10 +133,8 @@ def calcula_dist(v1,v2):
 	return math.sqrt((x2-x1)**2+(y2-y1)**2)
 
 def gera_caso(lista_linhas, pos):
-	#TODO: SUPORTAR MULTIPLOS CASOS
 	G = Grafo()
 	G.deposito = lista_linhas[pos].replace('\n', '')
-	#G.vertices[G.deposito] = []
 
 	for i in range(pos, len(lista_linhas)):
 		if len(lista_linhas[i].split()) == 4: # testa se eh uma linha do arquivo com coordenadas
@@ -312,20 +287,34 @@ def djikstra(vertices, origem, destino):
 	while x != origem:
 		caminho.append(x)
 		x = dict_aux[x][len(dict_aux[x])-1]
-	caminho.append(origem)
+	#caminho.append(origem)
 	caminho = caminho[::-1]
-	print caminho
+	return caminho
 
 	#return dict_aux[destino][len(dict_aux[destino])-1]
 
+def calcula_caminho(G, caminho):
+	soma_caminho = 0
+	for i in range(len(caminho)):
+		for j in range(len(G.vertices[caminho[i]])):
+			if i == len(caminho)-1:
+				break
+			if caminho[i+1] == G.vertices[caminho[i]][j][0]:
+				soma_caminho += G.vertices[caminho[i]][j][1]
+	return soma_caminho
 
 def p2(G):
 	# se for eureliano
 	if G.deposito_coincide_rua:
 		seg = soma_dists(G) / (20000.0/3600.0)			#  ARRUMAR
+		print  soma_dists(G)
 		print str(datetime.timedelta(seconds=int(seg)))
 	else:
-		pass
+		DFS(G.vertices)
+		G.vertices[G.deposito] = G.mais_perto
+		G.vertices[G.seg_mais_perto].append(G.deposito)
+		caminha_dij = djikstra(G,G.mais_perto, G.seg_mais_perto)
+
 
 if __name__ == "__main__":
 	#TODO: FAZER FOR PARA OS CASOS
@@ -333,15 +322,14 @@ if __name__ == "__main__":
 	lista_linhas, caso = ler_arquivo()
 	for i in range(int(caso)):
 		pos, G = gera_caso(lista_linhas, pos)
-		print G.vertices
-#		print G.deposito
+		#print G.vertices
+		#print G.deposito
 	#print G.dois_mais_prox_deposito()
-	#DFS(G)
-	#djikstra(G.vertices,"0 0", "25000 5000")
-	#print cycle
-	#dijkstra(G.vertices, '0 0', '0 0')
+	DFS(G)
+	print cycle
+	p2(G)
+	print calcula_caminho(G,cycle)
+	#djikstra(G.vertices, '0 0', '5000 -10000')
 	#if G.deposito_coincide_rua():
 	#	print "TRUE"
-	#print calcula_dist("0 0","1 1")
-	#hierholzer(G)
 	#print cycle
