@@ -23,26 +23,25 @@ class Grafo():
 		else:
 			return False
 
-	def mais_prox_deposito(self):
-		menor = 999999999
-		vproximo = ""
-		if self.deposito_coincide_rua():
-			adj = self.vertices[self.deposito]
-			
-			for i in adj:
+	def dois_mais_prox_deposito(self):
+		menor1 = 999999999
+		menor2 = 999999999
+		v1proximo = ""
+		v2proximo = ""
 
-				if menor > calcula_dist(self.deposito, i):
-					menor = calcula_dist(self.deposito, i)
-					vproximo = i
-		else:
-			d = G.vertices.iterkeys()
-			for i in range(len(self.vertices)-1):
-				v = d.next()
-				if menor > calcula_dist(self.deposito, v):
-					menor = calcula_dist(self.deposito, v)
-					vproximo = v
-
-		return menor, vproximo
+		d = G.vertices.iterkeys()
+		for i in range(len(self.vertices)-1):
+			v = d.next()
+			if menor1 > calcula_dist(self.deposito, v):
+				menor1 = calcula_dist(self.deposito, v)
+				v1proximo = v
+		d = G.vertices.iterkeys()
+		for i in range(len(self.vertices)-1):
+			v = d.next()
+			if menor2 > calcula_dist(self.deposito, v) and v != v1proximo:
+				menor2 = calcula_dist(self.deposito, v)
+				v2proximo = v
+		return menor1, v1proximo, menor2, v2proximo
 
 	def resolve_intersecoes(self):
 		cont = 1
@@ -240,6 +239,47 @@ def hierholzer(G):
 	print vertices_aux
 	return new_cycle
 
+def dijkstra(vertices, origem, destino):
+	dict_aux = copy.deepcopy(vertices)
+	for i in dict_aux.keys():
+		dict_aux[i].append(True)
+	for i in dict_aux.keys():
+		dict_aux[i].append(999999999)
+	for i in dict_aux.keys():
+		dict_aux[i].append('-1')
+
+	#dist = 0
+	dict_aux[origem][len(dict_aux[origem])-2] = 0
+
+	# enquanto a flag for false
+	while(dict_aux[destino][len(dict_aux[destino])-3] != False):
+		menor = 999999999
+
+		#pega menor distancia e o indice
+		for k in dict_aux.keys():
+			if dict_aux[k][len(dict_aux[k])-2] < menor and dict_aux[k][len(dict_aux[k])-3]:
+				menor = dict_aux[k][len(dict_aux[k])-2]
+				k_menor = k
+		u = k_menor
+
+		#flag = False
+		dict_aux[u][len(dict_aux[u])-3] = False
+
+		# percorre os vertices adjacentes
+		for v in range(len(dict_aux[u])-3):
+			if dict_aux[dict_aux[u][v][0]][len(dict_aux[dict_aux[u][v][0]])-3] and \
+			dict_aux[dict_aux[u][v][0]][len(dict_aux[dict_aux[u][v][0]])-2] >   \
+			dict_aux[u][len(dict_aux[u])-2] + dict_aux[u][v][1]:
+				dict_aux[dict_aux[u][v][0]][len(dict_aux[dict_aux[u][v][0]])-2] = \
+				dict_aux[u][len(dict_aux[u])-2] + dict_aux[u][v][1]
+				dict_aux[dict_aux[u][v][0]][len(dict_aux[dict_aux[u][v][0]])-1] = u
+
+	for k in dict_aux.keys():
+		print dict_aux[k][len(dict_aux[k])-2]
+	for k in dict_aux.keys():
+		print dict_aux[k][len(dict_aux[k])-1]
+	print dict_aux
+
 
 def p2(G):
 	# se for eureliano
@@ -254,7 +294,8 @@ if __name__ == "__main__":
 	pos = 0
 	lista_linhas = ler_arquivo()
 	pos, G = gera_caso(lista_linhas, pos)
-	print G.vertices
+	print G.dois_mais_prox_deposito()
+	#dijkstra(G.vertices, '0 0', '0 0')
 	#if G.deposito_coincide_rua():
 	#	print "TRUE"
 	#print calcula_dist("0 0","1 1")
