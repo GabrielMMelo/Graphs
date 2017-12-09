@@ -75,8 +75,11 @@ class Grafo():
 						intersecao = self.get_intersecao(int(split1[0]),int(split1[1]),int(split2[0]),int(split2[1]),int(split3[0]),int(split3[1]),int(split4[0]),int(split4[1]))
 						if intersecao:
 							novaKey = str(int(intersecao[0])) + " " + str(int(intersecao[1]))
+							#print novaKey
 							if not novaKey in self.vertices:
+								print "eh nois"
 								self.vertices[novaKey] = [[split1[0]+ " " + split1[1], 1],[split2[0]+ " " + split2[1],1],[split3[0]+ " " + split3[1],1],[split4[0]+ " " + split4[1],1]]
+								print self.vertices[novaKey]
 								self.vertices[split1[0]+ " " + split1[1]] #.remove(split2[0]+ " " + split2[1])
 								self.vertices[split1[0]+ " " + split1[1]] #.add([novaKey,1])
 								self.vertices[split2[0]+ " " + split2[1]] #.remove(split1[0]+ " " + split1[1])
@@ -86,8 +89,6 @@ class Grafo():
 								self.vertices[split4[0]+ " " + split4[1]] #.remove(split3[0]+ " " + split3[1])
 								self.vertices[split4[0]+ " " + split4[1]] #.add([novaKey,1])
 
-						else:
-							print "nao achou"
 			cont += 1
 		return self
 
@@ -156,8 +157,8 @@ def gera_caso(lista_linhas, pos):
 		elif i > pos and len(lista_linhas[i].split()) == 2:
 			pos = i
 			break
-		armazena_dist(G)
 		G.resolve_intersecoes()
+		armazena_dist(G)
 	return pos, G
 
 # guarda as distancias das coordenadas adjacentes no dict
