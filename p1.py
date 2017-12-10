@@ -1,11 +1,7 @@
-# Arrumar a conta de descobrir qt de caminhos
-# Fazer depuracao nos ifs do Dijkstra
-#p2: FUNCAO PARA CALCULO DAS DISTANCIAS/TEMPO
 #!/usr/bin/env python2
 
 import sys
 import copy
-import time
 
 def ler_arquivo():
 	nome_arquivo = sys.argv[1] 
@@ -104,16 +100,14 @@ def Dijkstra(G):
 
 			# Se o peso para vertice adjacente for MAIOR do que o .valor do vertice atual u
 			if (G.flag[v-1]) and (G.ma[u][v-1] >= G.valor[u]):
-				#if(G.valor[v-1] < G.valor[u]):					#TEMOS QUE VERIFICAR A NECESSIDADE DESSE IF 
-	
-				G.valor[v-1] =  G.valor[u]
-				G.pi[v-1] = u+1
+				if(G.valor[v-1] < G.valor[u]):
+					G.valor[v-1] =  G.valor[u]
+					G.pi[v-1] = u+1
 			# Se o peso para vertice adjacente for MENOR do que o .valor do vertice atual u
 			elif (G.flag[v-1]) and (G.ma[u][v-1] < G.valor[u]):
-				#if(G.valor[v-1] < G.valor[u]):					#TEMOS QUE VERIFICAR A NECESSIDADE DESSE IF 
-
-				G.valor[v-1] = G.ma[u][v-1]
-				G.pi[v-1] = u+1
+				if(G.valor[v-1] < G.valor[u]):
+					G.valor[v-1] = G.ma[u][v-1]
+					G.pi[v-1] = u+1
 	
 	if G.qt_pessoas%(G.valor[v_destino-1]-1) == 0:
 		print G.valor[v_destino-1]
@@ -133,7 +127,6 @@ def Dijkstra(G):
 	for x in range(len(caminho)-1):
 		sys.stdout.write(str(caminho[x]) + '-' )
 	sys.stdout.write(str(caminho[len(caminho)-1]))
-	print
 
 if __name__ == "__main__":
 	pos_lista_linhas = 0
