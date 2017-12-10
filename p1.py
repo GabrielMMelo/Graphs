@@ -139,7 +139,6 @@ if __name__ == "__main__":
 	pos_lista_linhas = 0
 	fim_lista = False
 	caso = 1
-	init = time.time()
 	lista_linhas = ler_arquivo()
 
 	while fim_lista != True: 
@@ -147,6 +146,4 @@ if __name__ == "__main__":
 		g = Grafo(ma, qt_vertice, qt_aresta, v_origem, v_destino, qt_pessoas)
 		print "Caso #" + str(caso)
 		caso += 1
-		Dijkstra(g)
-	fim = time.time()
-	print fim - init 
+		Dijkstra(g) 
