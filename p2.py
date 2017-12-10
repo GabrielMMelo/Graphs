@@ -162,8 +162,8 @@ def gera_caso(lista_linhas, pos):
 		elif i > pos and len(lista_linhas[i].split()) == 2:
 			pos = i
 			break
+		#G.resolve_intersecoes()
 		armazena_dist(G)
-		G.resolve_intersecoes()
 	G.dois_mais_prox_deposito()	
 	return pos, G
 
@@ -200,7 +200,7 @@ def DFS(vertices):
 def DFS_VISIT(vertices, chave, flag):
 	vertices[chave][len(vertices[chave])-2] = "cinza"
 	cycle.append(chave)
-	if not flag:
+	if flag == False:
 		for v in range(len(vertices[chave])-2):
 			if vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "branco":
 				vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] = chave
@@ -214,16 +214,16 @@ def DFS_VISIT(vertices, chave, flag):
 					cycle.append(chave)
 					cycle.append(vertices[chave][v][0])
 					cycle.append(chave)
+					flag = True
 			if flag:
 				break
-		vertices[chave][ len(vertices[chave])-2] = "preto"
+	vertices[chave][ len(vertices[chave])-2] = "preto"
 
 
 def hierholzer(G):
 	new_cycle = []
 	vertices_aux = copy.deepcopy(G.vertices)
 	DFS(vertices_aux)
-	#print "Ciclo" + str(cycle)
 	new_cycle.append(copy.deepcopy(cycle))
 	#print "new_cycle " +  str(new_cycle)
 	cont = 0
@@ -248,7 +248,6 @@ def hierholzer(G):
 		del cycle[:]
 		#x = new_cycle.pop()
 		DFS(vertices_aux)
-		#print "Ciclo" + str(cycle)
 		new_cycle.append(copy.deepcopy(cycle))
 		#print "new_cycle " + str(new_cycle)
 		#remove cycle do grafo
@@ -389,7 +388,7 @@ if __name__ == "__main__":
 	lista_linhas, caso = ler_arquivo()
 	for i in range(int(caso)):
 		pos, G = gera_caso(lista_linhas, pos)
-		#print G.vertices
+#		print G.vertices
 		p2(G)
 		if i != int(caso)-1:
 			print ""
@@ -399,13 +398,3 @@ if __name__ == "__main__":
 	#x += calcula_dist(G.mais_perto, "5000 5000") / (20000.0/3600.0)
 	#x += 1.0 / (20000.0/3600.0)
 	#print str(datetime.timedelta(seconds=int(x)))
-	#print G.dois_mais_prox_deposito()
-	#DFS2(G)
-	#print cycle
-	#hierholzer(G)
-	#p2(G)
-	#print calcula_caminho(G,cycle)
-	#djikstra(G.vertices, '0 0', '5000 -10000')
-	#if G.deposito_coincide_rua():
-	#	print "TRUE"
-	#print cycle
