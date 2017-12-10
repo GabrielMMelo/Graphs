@@ -162,7 +162,7 @@ def gera_caso(lista_linhas, pos):
 		elif i > pos and len(lista_linhas[i].split()) == 2:
 			pos = i
 			break
-		#G.resolve_intersecoes()
+		G.resolve_intersecoes()
 		armazena_dist(G)
 	G.dois_mais_prox_deposito()	
 	return pos, G
@@ -194,17 +194,18 @@ def DFS(vertices):
 	flag = False
 	for chave in dict_aux.keys():
 		if dict_aux[chave][len(dict_aux[chave])-2] == "branco" and len(dict_aux[chave])-2 > 0:
-			if DFS_VISIT(dict_aux, chave, flag):
+			if DFS_VISIT(dict_aux, chave):
 				break
 
-def DFS_VISIT(vertices, chave, flag):
+def DFS_VISIT(vertices, chave):
+	global flag
 	vertices[chave][len(vertices[chave])-2] = "cinza"
-	cycle.append(chave)
 	if flag == False:
+		cycle.append(chave)
 		for v in range(len(vertices[chave])-2):
 			if vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "branco":
 				vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] = chave
-				DFS_VISIT(vertices, vertices[chave][v][0],flag)
+				DFS_VISIT(vertices, vertices[chave][v][0])
 			elif vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "cinza":
 				if vertices[chave][v][0] != vertices[chave][len(vertices[chave])-1]:
 					flag = True
