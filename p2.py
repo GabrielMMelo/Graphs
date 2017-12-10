@@ -2,7 +2,6 @@
 
 import sys
 import math
-import datetime
 import copy
 
 class Grafo():
@@ -58,11 +57,8 @@ class Grafo():
 						intersecao = self.get_intersecao(int(split1[0]),int(split1[1]),int(split2[0]),int(split2[1]),int(split3[0]),int(split3[1]),int(split4[0]),int(split4[1]))
 						if intersecao:
 							novaKey = str(int(intersecao[0])) + " " + str(int(intersecao[1]))
-							#print novaKey
 							if not novaKey in self.vertices:
-							#	print "eh nois"
 								self.vertices[novaKey] = [[split1[0]+ " " + split1[1], 1],[split2[0]+ " " + split2[1],1],[split3[0]+ " " + split3[1],1],[split4[0]+ " " + split4[1],1]]
-								#print self.vertices[novaKey]
 								
 								contador = 0
 								self.vertices[split1[0]+ " " + split1[1]].append([novaKey,0])
@@ -137,10 +133,11 @@ def gera_caso(lista_linhas, pos):
 	G.deposito = lista_linhas[pos].replace('\n', '')
 
 	for i in range(pos, len(lista_linhas)):
-		if len(lista_linhas[i].split()) == 4: # testa se eh uma linha do arquivo com coordenadas
+		# testa se eh uma linha do arquivo com coordenadas
+		if len(lista_linhas[i].split()) == 4: 
 			temp = lista_linhas[i].split()
-			aux = temp[0] + " " + temp[1] # junta 1a coordenada
-			aux2 = temp[2] + " " + temp[3] # junta 2a coordenada
+			aux = temp[0] + " " + temp[1] 
+			aux2 = temp[2] + " " + temp[3]
 			if aux not in G.vertices and aux2 not in G.vertices:
 				G.vertices[aux] = [[aux2,0]]
 				G.vertices[aux2] = [[aux,0]]
@@ -163,7 +160,7 @@ def gera_caso(lista_linhas, pos):
 			pos = i
 			break
 		#G.resolve_intersecoes()		<---------- INTERSECOES
-		armazena_dist(G)
+	armazena_dist(G)
 	G.dois_mais_prox_deposito()	
 	return pos, G
 
