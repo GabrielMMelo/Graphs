@@ -99,13 +99,11 @@ def Dijkstra(G):
 			adjAux.remove(v)
 
 			# Se o peso para vertice adjacente for MAIOR do que o .valor do vertice atual u
-			if (G.flag[v-1]) and (G.ma[u][v-1] >= G.valor[u]):
-				if(G.valor[v-1] < G.valor[u]):
+			if (G.flag[v-1]) and (G.ma[u][v-1] >= G.valor[u]) and (G.valor[v-1] < G.valor[u]):
 					G.valor[v-1] =  G.valor[u]
 					G.pi[v-1] = u+1
 			# Se o peso para vertice adjacente for MENOR do que o .valor do vertice atual u
-			elif (G.flag[v-1]) and (G.ma[u][v-1] < G.valor[u]):
-				if(G.valor[v-1] < G.valor[u]):
+			elif (G.flag[v-1]) and (G.ma[u][v-1] < G.valor[u]) and (G.valor[v-1] < G.valor[u]):
 					G.valor[v-1] = G.ma[u][v-1]
 					G.pi[v-1] = u+1
 	
