@@ -1,15 +1,5 @@
 #!/usr/bin/env python2
 
-# Leitura e geracao de multiplos casos (X)
-# DFS (X)
-# Djikstra (X)
-# Intersecao (X)
-# Calculo do segundo mais proximo (X)
-# Calcular a distancia somente apos tratamento da intersecao (X)
-# Add vertices no grafo  (X)
-# ARREDONDAR
-# LINHA EM BRANCA FINAL DE CADA CASO 
-
 import sys
 import math
 import datetime
@@ -115,6 +105,11 @@ class Grafo():
 		y = k2 + (l2-k2)*s
 		return x,y
 
+def get_num_arestas(vertices):
+	num = 0
+	for k in vertices.keys():
+		num += len(vertices[k])
+	return num
 
 def ler_arquivo():
 	nome_arquivo = sys.argv[1]
@@ -169,12 +164,8 @@ def gera_caso(lista_linhas, pos):
 			pos = i
 			break
 		armazena_dist(G)
-		print "bct"
-		G.resolve_intersecoes()
-		print  "bct1"
-	print "carai"
+#		G.resolve_intersecoes()
 	G.dois_mais_prox_deposito()	
-	print "oi"
 	return pos, G
 
 # guarda as distancias das coordenadas adjacentes no dict
@@ -202,26 +193,71 @@ def DFS(G):
 	flag = False
 	if G.deposito_coincide_rua():
 		dict_aux[G.deposito][len(dict_aux[G.deposito])-1] = -2
-		DFS_VISIT(dict_aux, G.deposito, flag, G.deposito)
+		DFS_VISIT2(dict_aux, G.deposito, flag, G.deposito)
 	else:	
 		dict_aux[G.mais_perto][len(dict_aux[G.mais_perto])-1] = -2
-		DFS_VISIT(dict_aux, G.mais_perto, flag, G.mais_perto)
+		DFS_VISIT2(dict_aux, G.mais_perto, flag, G.mais_perto)
 	
 	for chave in dict_aux.keys():
 		if dict_aux[chave][len(dict_aux[chave])-2] == "branco" and len(dict_aux[chave])-2 > 0:
-			DFS_VISIT(dict_aux, chave, flag, G.deposito)
+			DFS_VISIT2(dict_aux, chave, flag, G.deposito)
 #	cycle.append(G.deposito)
+
+def DFS2(vertices):
+	global cycle
+	global flag
+	cycle = []
+	dict_aux = copy.deepcopy(vertices)
+	for i in dict_aux.keys():		
+		dict_aux[i].append("branco")
+	for i in dict_aux.keys():
+		dict_aux[i].append(-1)
+	flag = False
+	for chave in dict_aux.keys():
+		if dict_aux[chave][len(dict_aux[chave])-2] == "branco" and len(dict_aux[chave])-2 > 0:
+			if DFS_VISIT2(dict_aux, chave, flag):
+				break
+
+def DFS_VISIT2(vertices, chave, flag):
+	vertices[chave][len(vertices[chave])-2] = "cinza"
+	#del cycle[:]
+	cycle.append(chave)
+	if not flag:
+		for v in range(len(vertices[chave])-2):
+			if vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "branco":
+				vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] = chave
+				DFS_VISIT2(vertices, vertices[chave][v][0],flag)
+			elif vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "cinza" \
+			and vertices[chave][v][0] != vertices[chave][len(vertices[chave])-1]:
+				flag = True
+				cycle.append(vertices[chave][v][0])
+			if flag:
+				break
+		vertices[chave][ len(vertices[chave])-2] = "preto"
 
 def DFS_VISIT(vertices, chave, flag, inicio):
 	vertices[chave][len(vertices[chave])-2] = "cinza"
 	cycle.append(chave)
 
 	for v in range(len(vertices[chave])-2):
+		
+		if vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "branco":
+			# PI do vertice V adjacente a CHAVE = CHAVE
+			vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] = chave
+			print "BRANCO"
+			print "chave: " + str(chave) + " / v: " + str(vertices[chave][v][0])
+			DFS_VISIT(vertices, vertices[chave][v][0], flag, inicio)
+			continue
+
 		# Se o V for o INICIO e o PI de CHAVE nao eh INICIO
-		if vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] != -1 and \
+		elif vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] != -1 and \
 		vertices[ chave ][ len(vertices[chave])-1 ] != inicio and vertices[chave][v][0] == inicio:
 				cycle.append(inicio)
-				flag = True
+#				flag = True
+
+		elif vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] == cycle[-1]:
+			#print "chave: " + str(chave) + " / v: " + str(vertices[chave][v][0])
+			pass
 
 		elif vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "vermelho":
 			vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] = "cinza"
@@ -229,13 +265,6 @@ def DFS_VISIT(vertices, chave, flag, inicio):
 			cycle.append(chave)
 
 
-		# Se a COR do vertice V adjacente a CHAVE for == BRANCO
-		elif vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] == "branco":
-			# PI do vertice V adjacente a CHAVE = CHAVE
-			vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] = chave
-			DFS_VISIT(vertices, vertices[chave][v][0], flag, inicio)
-			continue
-		
 		elif vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-1 ] != -1 and \
 		vertices[ chave ][ len(vertices[chave])-1 ] != inicio:
 			vertices[ vertices[chave][v][0] ][ len(vertices[vertices[chave][v][0]])-2 ] = "vermelho"
@@ -246,8 +275,65 @@ def DFS_VISIT(vertices, chave, flag, inicio):
 	# Forma o caminho inverso da busca, gerando o ciclo completo
 	if vertices[chave][ len(vertices[chave])-1 ] != -2:
 		cycle.append(vertices[chave][ len(vertices[chave])-1 ])
-		
+
 	vertices[chave][len(vertices[chave])-2] = "preto"
+
+
+
+def hierholzer(G):
+	new_cycle = []
+	vertices_aux = copy.deepcopy(G.vertices)
+	DFS2(vertices_aux)
+	new_cycle += cycle
+	print cycle
+	cont = 0
+	flag_aux = False
+	for i in cycle:
+		auxSoma = 0
+		if flag_aux:
+			break
+		for j in range(len(vertices_aux[i])):
+			if cont == len(cycle)-2: #and j == len(vertices_aux[i])-1:
+				if vertices_aux[i][j-auxSoma][0] == cycle[cont+1]:
+					flag_aux = True
+					vertices_aux[i].pop(j)
+					auxSoma +=1
+					break
+				continue
+			elif vertices_aux[i][j-auxSoma][0] == cycle[cont+1]:
+				vertices_aux[i].pop(j)
+				auxSoma +=1
+		cont += 1
+	while get_num_arestas(vertices_aux) != 0:
+		del cycle[:]
+		x = new_cycle.pop()
+		DFS2(vertices_aux)
+		print cycle
+		new_cycle += cycle
+
+		#remove cycle do grafo
+		cont = 0
+		flag_aux = False
+		for i in cycle:
+			auxSoma = 0
+			if flag_aux:
+				break
+			for j in range(len(vertices_aux[i])):
+				if cont == len(cycle)-2: #and j == len(vertices_aux[i])-1:
+					if vertices_aux[i][j-auxSoma][0] == cycle[cont+1]:
+						flag_aux = True
+						vertices_aux[i].pop(j)
+						auxSoma +=1
+						break
+					continue
+				elif vertices_aux[i][j-auxSoma][0] == cycle[cont+1]:
+					vertices_aux[i].pop(j)
+					auxSoma +=1
+			cont += 1	
+	print vertices_aux
+	print new_cycle 
+	return new_cycle
+
 
 def djikstra(vertices, origem, destino):
 	dict_aux = copy.deepcopy(vertices)
@@ -346,22 +432,24 @@ def p2(G):
 		print segundos_hora(resultado)
 
 if __name__ == "__main__":
-	print "666"
 	pos = 0
 	lista_linhas, caso = ler_arquivo()
 	for i in range(int(caso)):
 		pos, G = gera_caso(lista_linhas, pos)
-		p2(G)
+		#print G.vertices
+		#p2(G)
 		if i != int(caso)-1:
 			print ""
+		#print cycle
 		#print G.deposito
 	#x = calcula_dist("5000 5000", "0 1") / (50000.0/3600.0)
 	#x += calcula_dist(G.mais_perto, "5000 5000") / (20000.0/3600.0)
 	#x += 1.0 / (20000.0/3600.0)
 	#print str(datetime.timedelta(seconds=int(x)))
 	#print G.dois_mais_prox_deposito()
-	#DFS(G)
+	#DFS2(G)
 	#print cycle
+	hierholzer(G)
 	#p2(G)
 	#print calcula_caminho(G,cycle)
 	#djikstra(G.vertices, '0 0', '5000 -10000')
