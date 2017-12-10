@@ -162,7 +162,7 @@ def gera_caso(lista_linhas, pos):
 		elif i > pos and len(lista_linhas[i].split()) == 2:
 			pos = i
 			break
-		G.resolve_intersecoes()
+		#G.resolve_intersecoes()		<---------- INTERSECOES
 		armazena_dist(G)
 	G.dois_mais_prox_deposito()	
 	return pos, G
@@ -353,7 +353,7 @@ def segundos_hora(seg):
 	hora = minuto / 60
 	minuto = minuto % 60
 
-	return str(hora)+":"+str(minuto)
+	return str(int(hora))+":"+str(int(minuto))
 
 def p2(G):
 	# se for eureliano
@@ -389,13 +389,6 @@ if __name__ == "__main__":
 	lista_linhas, caso = ler_arquivo()
 	for i in range(int(caso)):
 		pos, G = gera_caso(lista_linhas, pos)
-#		print G.vertices
 		p2(G)
 		if i != int(caso)-1:
 			print ""
-		#print cycle
-		#print G.deposito
-	#x = calcula_dist("5000 5000", "0 1") / (50000.0/3600.0)
-	#x += calcula_dist(G.mais_perto, "5000 5000") / (20000.0/3600.0)
-	#x += 1.0 / (20000.0/3600.0)
-	#print str(datetime.timedelta(seconds=int(x)))
