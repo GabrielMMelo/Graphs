@@ -110,7 +110,6 @@ def Dijkstra(G):
 					G.pi[v-1] = u+1
 	
 	if G.qt_pessoas%(G.valor[v_destino-1]-1) == 0:
-		print G.valor[v_destino-1]
 		viagens  = G.qt_pessoas/(G.valor[v_destino-1]-1)
 	else:
 		viagens = G.qt_pessoas/(G.valor[v_destino-1]-1) +1
