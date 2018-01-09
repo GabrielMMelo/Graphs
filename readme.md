@@ -74,10 +74,11 @@ neve;
 alcançável ou alcança o ponto de partida por uma rua de mão única.
 Apresentamos um exemplo de dado de entrada deste problema na sequência.
 
-## Entrada
+### Entrada
 
 ```
 1
+
 0 0
 0 0 10000 10000
 5000 -10000 5000 10000
@@ -92,7 +93,7 @@ rua. Lembre-se: existe uma linha branca entre cada caso de teste. A resposta esp
 para este caso consiste no tempo mínimo gasto para a execução desta tarefa, no formato
 hora:minuto.
 
-## Saída
+### Saída
 
 ```
 3:55
@@ -101,3 +102,27 @@ hora:minuto.
 Caso os minutos resultem em um número fracionário, arredonde-o para o menor inteiro
 maior que os minutos calculados. Na saída, imprima uma linha branca entre cada caso de
 teste.
+
+## Problema #3 - 
+
+Pedro é um estudante que pretende fazer um tour pela Europa, passeando por cidades
+importantes e conhecendo mais sobre a fantástica história do “velho mundo”. No entanto,
+Pedro possui sérias restrições orçamentais e necessita de otimizar seu percurso nesta viagem.
+O fato é: existe um conjunto de C pontos turísticos que serão visitadas por Pedro, e um
+conjunto de hostels que ele poderá utilizar como ponto de parada para continuar sua viagem.
+Isso decorre de uma limitação imposta previamente por Pedro: o limite de tempo de suas
+visitas por dia será de T horas. Em cada ponto turístico u ∈ C, Pedro deseja permanecer por
+tu horas. Vamos assumir que o tempo em que permance em um hostel não deve ser contado
+em seu limite diário, ou seja, tu = 0, para u ∈ H. Ajude Pedro a planejar sua divertida e
+econômica viagem, com o objetivo de:
+    *  Minimizar o número de dias viajados (objetivo principal);
+    *  Minimizar a duração total da viagem (objetivo secundário).
+Outras informações relevantes:
+* o hostel inicial do percurso como um todo deverá ser igual ao hostel final do percurso
+como um todo;
+* o hostel correspondente ao final da i-ésima viagem deve ser o ponto de partida da
+viagem i + 1-ésima;
+* o tempo gasto para o deslocamento entre cada ponto turístico é proporcional à distância
+entre os dois pontos;
+* cada ponto turístico deve ser visitado exatamente uma vez;
+* os hostels podem ser visitados em quantidades arbritrárias
