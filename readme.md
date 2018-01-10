@@ -123,6 +123,7 @@ em seu limite diário, ou seja, tu = 0, para u ∈ H. Ajude Pedro a planejar sua
 econômica viagem, com o objetivo de:
 * Minimizar o número de dias viajados (objetivo principal);
 * Minimizar a duração total da viagem (objetivo secundário).
+
 Outras informações relevantes:
 * o hostel inicial do percurso como um todo deverá ser igual ao hostel final do percurso
 como um todo;
