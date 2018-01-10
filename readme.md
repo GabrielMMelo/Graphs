@@ -1,5 +1,7 @@
 # Graph's problems      (PORTUGUESE)
 
+# - TP1
+
 ## Problema #1 - Problema do guia turístico
 
 Um guia turístico autônomo, residente na cidade de Lavras (MG), presta serviços semanalmente para grupos de turistas interessados em conhecer as belezas naturais desta região.
@@ -103,7 +105,11 @@ Caso os minutos resultem em um número fracionário, arredonde-o para o menor in
 maior que os minutos calculados. Na saída, imprima uma linha branca entre cada caso de
 teste.
 
-## Problema #3 - 
+#
+
+# - TP2
+
+## Problema #3 - Problema do turísta pobre
 
 Pedro é um estudante que pretende fazer um tour pela Europa, passeando por cidades
 importantes e conhecendo mais sobre a fantástica história do “velho mundo”. No entanto,
