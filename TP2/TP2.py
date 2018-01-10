@@ -19,11 +19,20 @@ Funcao pra pegar o mais proximo (diferente de hostel)
 '''
 
 class Grafo:
+
 	def __init__(self, t_total_dia, qt_hostel, qt_pontos, locais): 
 		self.t_total_dia = t_total_dia
-		self.qt_hostel = qt_hostel
-		self.qt_pontos = qt_pontos
+		self.qt_hostel = int(qt_hostel)
+		self.qt_pontos = int(qt_pontos)
 		self.locais = locais
+		self.ma_dist = [[0 for i in range(self.qt_hostel+self.qt_pontos)] for j in range(self.qt_hostel+self.qt_pontos)]
+
+	def dist_entre_todos(self):
+		#cria matriz triangular superior de distancias entre os locais
+		for x in range(self.qt_hostel+self.qt_pontos):
+			for y in range(x, self.qt_hostel+self.qt_pontos):
+				dist = calcula_dist(locais[x][0], locais[y][0])
+				self.ma_dist[x][y] = dist
 
 def ler_arquivo():
 	nome_arquivo = sys.argv[1] 	
@@ -67,18 +76,9 @@ def calcula_dist(v1,v2):
 	y2 = float(aux[1])
 	return math.sqrt((x2-x1)**2+(y2-y1)**2)
 
-def dist_entre_todos(G):
-	cont = 0
-	for x in G.locais:
-		for y in G.locais:
-			dist = calcula_dist(x[0], y[0])
-			G.locais[cont].append(dist)
-		cont += 1
-
 if __name__ == "__main__":
 	lista_linhas = ler_arquivo()
 	qt_hostel, qt_pontos, t_total_dia, locais = gera_caso(lista_linhas)
 	g = Grafo(t_total_dia, qt_hostel, qt_pontos, locais)
+	g.dist_entre_todos()
 	print g.t_total_dia, g.qt_hostel, g.qt_pontos
-	dist_entre_todos(g)
-	print g.locais[2]
