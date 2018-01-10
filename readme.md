@@ -121,8 +121,8 @@ visitas por dia será de T horas. Em cada ponto turístico u ∈ C, Pedro deseja
 tu horas. Vamos assumir que o tempo em que permance em um hostel não deve ser contado
 em seu limite diário, ou seja, tu = 0, para u ∈ H. Ajude Pedro a planejar sua divertida e
 econômica viagem, com o objetivo de:
-    *  Minimizar o número de dias viajados (objetivo principal);
-    *  Minimizar a duração total da viagem (objetivo secundário).
+    * Minimizar o número de dias viajados (objetivo principal);
+    * Minimizar a duração total da viagem (objetivo secundário).
 Outras informações relevantes:
 * o hostel inicial do percurso como um todo deverá ser igual ao hostel final do percurso
 como um todo;
