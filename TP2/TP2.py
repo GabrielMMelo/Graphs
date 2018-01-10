@@ -25,14 +25,16 @@ class Grafo:
 		self.qt_hostel = int(qt_hostel)
 		self.qt_pontos = int(qt_pontos)
 		self.locais = locais
-		self.ma_dist = [[0 for i in range(self.qt_hostel+self.qt_pontos)] for j in range(self.qt_hostel+self.qt_pontos)]
+		self.lista_dist = []
 
 	def dist_entre_todos(self):
-		#cria matriz triangular superior de distancias entre os locais
+		lista_aux = []
 		for x in range(self.qt_hostel+self.qt_pontos):
+			lista_aux = []
 			for y in range(x, self.qt_hostel+self.qt_pontos):
 				dist = calcula_dist(locais[x][0], locais[y][0])
-				self.ma_dist[x][y] = dist
+				lista_aux.append(dist)
+			self.lista_dist.append(lista_aux)
 
 def ler_arquivo():
 	nome_arquivo = sys.argv[1] 	
@@ -82,3 +84,4 @@ if __name__ == "__main__":
 	g = Grafo(t_total_dia, qt_hostel, qt_pontos, locais)
 	g.dist_entre_todos()
 	print g.t_total_dia, g.qt_hostel, g.qt_pontos
+	print g.lista_dist[104]
