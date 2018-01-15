@@ -2,17 +2,23 @@
 
 import sys
 import math
+import copy
 
 # TODO:
 ''' Criar uma dict ou uma lista com a seguinte estrutura:
-0: ["coord_x coord_y", flag, t_visit, dist0-1, dist0-2],
-1: ["coord_x coord_y", flag, t_visit, dist1-2],
-2: ["coord_x coord_y", flag, t_visit]
+0: ["coord_x coord_y", flag, t_visit],
+1: ["coord_x coord_y", flag, t_visit],
+2: ["coord_x coord_y", flag, t_visit]. OK!
 
 Utilizar o indice para verificar se esta lendo informacoes do hostel ou dos pontos turisticos,
-utilizando qt_hostel e qt_pontos da classe Grafo
+utilizando qt_hostel e qt_pontos da classe Grafo OK!
 
-Funcao pra pegar o mais proximo (diferente de hostel)'''
+Funcao pra pegar o mais proximo (diferente de hostel) OK!
+
+Estutura lista_dist:
+0: [distancias de 0 a 105 em relacao a 0],
+1: [distancias de 0 a 105 em relacao a 1]. OK!
+'''
 
 class Grafo:
 
@@ -27,10 +33,9 @@ class Grafo:
 		lista_aux = []
 		for x in range(self.qt_hostel+self.qt_pontos):
 			lista_aux = []
-			for y in range(x, self.qt_hostel+self.qt_pontos):
-				if x != y: # para nao comparar coordenadas iguais
-					dist = calcula_dist(locais[x][0], locais[y][0])
-					lista_aux.append(dist)
+			for y in range(self.qt_hostel+self.qt_pontos):
+				dist = calcula_dist(locais[x][0], locais[y][0])
+				lista_aux.append(dist)
 			self.lista_dist.append(lista_aux)
 
 def ler_arquivo():
@@ -76,7 +81,6 @@ def calcula_dist(v1,v2):
 	return math.sqrt((x2-x1)**2+(y2-y1)**2)
 
 def mais_proximo(G, vertice):
-	pass
 	# TODO: 
 	'''Descobrir o vertice mais proximo apartir de um selecionado.
 	   Caso o mais proximo achado ja foi visitado, rejeitar e procurar outro.
@@ -84,10 +88,35 @@ def mais_proximo(G, vertice):
 	   que nao estao listadas no seu vertice.
 	   Verificar se e mais facil colocar a flag visitado na estrutura lista_dist
 	'''
+	lista_dist_aux = []
+	lista_dist_aux = copy.deepcopy(G.lista_dist)
+	for i in range(len(lista_dist_aux)):
+		menor = min(lista_dist_aux[vertice])
+		index = lista_dist_aux[vertice].index(menor)
+		if G.locais[index][1] == False:
+			menor = min(lista_dist_aux[vertice])
+			break
+		else:
+			# Se o vertice ja foi visitado setar distancia INF
+			lista_dist_aux[vertice][index] = 999999999999			
+
+	return menor, index
+
+def vizinho_mais_proximo(G):
+	#TODO:
+	''' Percorrer o grafo partindo de um ponto qualquer, e andar para o seu vizinho
+	mais proximo se o mesmo n foi visitado
+	'''
+	pass
 
 if __name__ == "__main__":
 	lista_linhas = ler_arquivo()
 	qt_hostel, qt_pontos, t_total_dia, locais = gera_caso(lista_linhas)
 	g = Grafo(t_total_dia, qt_hostel, qt_pontos, locais)
 	g.dist_entre_todos()
-	print g.t_total_dia, g.qt_hostel, g.qt_pontos
+	g.locais[1][1] = True
+	g.locais[6][1] = True
+	#print g.t_total_dia, g.qt_hostel, g.qt_pontos
+
+	print mais_proximo(g, 6)
+	print calcula_dist("45.000000 68.000000","55.000000 85.000000")
