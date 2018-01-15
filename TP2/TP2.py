@@ -61,7 +61,7 @@ def gera_caso(lista_linhas):
 		temp = linha.split()
 		if len(temp) == 3:
 			locais_aux.append(temp[1] + ' ' + temp[2])
-			locais_aux.append(False)
+			locais_aux.append(-1)
 			locais_aux.append(0)
 		else:
 			locais_aux.append(temp[1] + ' ' + temp[2])
@@ -90,7 +90,7 @@ def mais_proximo(G, vertice):
 	'''
 	lista_dist_aux = []
 	lista_dist_aux = copy.deepcopy(G.lista_dist)
-	for i in range(len(lista_dist_aux)):
+	for i in range(len(lista_dist_aux[vertice])):
 		menor = min(lista_dist_aux[vertice])
 		index = lista_dist_aux[vertice].index(menor)
 		if G.locais[index][1] == False:
@@ -100,23 +100,53 @@ def mais_proximo(G, vertice):
 			# Se o vertice ja foi visitado setar distancia INF
 			lista_dist_aux[vertice][index] = 999999999999			
 
-	return menor, index
+	return index
 
-def vizinho_mais_proximo(G):
+def hostel_mais_proximo(G, v_destino):
+	menor = min(G.lista_dist[v_destino][:G.qt_hostel])
+	index_menor = G.lista_dist[v_destino].index(menor)
+	return index_menor
+
+def e_hostel(G, v_destino):
+	if v_destino < G.qt_hostel:
+		return True
+
+def TP2(G, inicio):
 	#TODO:
 	''' Percorrer o grafo partindo de um ponto qualquer, e andar para o seu vizinho
 	mais proximo se o mesmo n foi visitado
 	'''
-	pass
+	v_atual = inicio
+	t_atual = 0
+	dias = 0
+	t_total = 0
+
+	# quando sair do while, ir para o hostel inicial
+	while(False in [coluna[1] for coluna in G.locais]):
+		if not e_hostel(G, v_atual):
+			G.locais[v_atual][1] = True
+		lista_dist_aux = []
+		prioridade = [0] * len(G.locais)
+		lista_dist_aux = copy.deepcopy(G.lista_dist)
+
+		for i in range(len(G.lista_dist)):
+
+			v_destino = mais_proximo(G, v_atual)
+			if not e_hostel(G, v_destino):
+				if t_atual + G.lista_dist[v_atual][v_destino] + G.locais[v_destino][2] + \
+				  G.lista_dist[v_destino][hostel_mais_proximo(v_destino)] < G.t_total_dia:
+
+			else:
+				prioridade[v_destino] = 1
+
 
 if __name__ == "__main__":
 	lista_linhas = ler_arquivo()
 	qt_hostel, qt_pontos, t_total_dia, locais = gera_caso(lista_linhas)
 	g = Grafo(t_total_dia, qt_hostel, qt_pontos, locais)
 	g.dist_entre_todos()
-	g.locais[1][1] = True
-	g.locais[6][1] = True
 	#print g.t_total_dia, g.qt_hostel, g.qt_pontos
-
-	print mais_proximo(g, 6)
-	print calcula_dist("45.000000 68.000000","55.000000 85.000000")
+	#TP2(g, 1)
+	print hostel_mais_proximo(g, 6)
+	#print mais_proximo(g, 6)
+	#print calcula_dist("45.000000 68.000000","55.000000 85.000000")
