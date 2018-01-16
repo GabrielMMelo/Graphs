@@ -3,6 +3,9 @@
 import sys
 import math
 import copy
+from random import *
+
+INF = 9999999999999
 
 # TODO:
 ''' Criar uma dict ou uma lista com a seguinte estrutura:
@@ -23,7 +26,7 @@ Estutura lista_dist:
 class Grafo:
 
 	def __init__(self, t_total_dia, qt_hostel, qt_pontos, locais): 
-		self.t_total_dia = t_total_dia
+		self.t_total_dia = float(t_total_dia)
 		self.qt_hostel = int(qt_hostel)
 		self.qt_pontos = int(qt_pontos)
 		self.locais = locais
@@ -66,7 +69,7 @@ def gera_caso(lista_linhas):
 		else:
 			locais_aux.append(temp[1] + ' ' + temp[2])
 			locais_aux.append(False)
-			locais_aux.append(temp[3])
+			locais_aux.append(float(temp[3]))
 		locais.append(locais_aux)
 
 	return qt_hostel, qt_pontos, t_total_dia, locais
@@ -80,7 +83,7 @@ def calcula_dist(v1,v2):
 	y2 = float(aux[1])
 	return math.sqrt((x2-x1)**2+(y2-y1)**2)
 
-def mais_proximo(G, vertice):
+def mais_proximo(locais, lista_dist, vertice):
 	# TODO: 
 	'''Descobrir o vertice mais proximo apartir de um selecionado.
 	   Caso o mais proximo achado ja foi visitado, rejeitar e procurar outro.
@@ -88,19 +91,23 @@ def mais_proximo(G, vertice):
 	   que nao estao listadas no seu vertice.
 	   Verificar se e mais facil colocar a flag visitado na estrutura lista_dist
 	'''
+	flag = False
 	lista_dist_aux = []
-	lista_dist_aux = copy.deepcopy(G.lista_dist)
+	lista_dist_aux = copy.deepcopy(lista_dist)
 	for i in range(len(lista_dist_aux[vertice])):
 		menor = min(lista_dist_aux[vertice])
 		index = lista_dist_aux[vertice].index(menor)
-		if G.locais[index][1] == False:
+		if locais[index][1] == False:
 			menor = min(lista_dist_aux[vertice])
+			flag = True
 			break
 		else:
 			# Se o vertice ja foi visitado setar distancia INF
-			lista_dist_aux[vertice][index] = 999999999999			
-
-	return index
+			lista_dist_aux[vertice][index] = INF
+	if flag:			
+		return index
+	else:
+		return -1
 
 def hostel_mais_proximo(G, v_destino):
 	menor = min(G.lista_dist[v_destino][:G.qt_hostel])
@@ -117,27 +124,48 @@ def TP2(G, inicio):
 	mais proximo se o mesmo n foi visitado
 	'''
 	v_atual = inicio
-	t_atual = 0
+	t_atual = 0.0
 	dias = 0
-	t_total = 0
+	t_total = 0.0
 
 	# quando sair do while, ir para o hostel inicial
 	while(False in [coluna[1] for coluna in G.locais]):
 		if not e_hostel(G, v_atual):
 			G.locais[v_atual][1] = True
 		lista_dist_aux = []
-		prioridade = [0] * len(G.locais)
+		flag = False
 		lista_dist_aux = copy.deepcopy(G.lista_dist)
 
 		for i in range(len(G.lista_dist)):
 
-			v_destino = mais_proximo(G, v_atual)
+			v_destino = mais_proximo(G.locais, lista_dist_aux, v_atual)
+			if v_destino == -1:
+				break
 			if not e_hostel(G, v_destino):
-				if t_atual + G.lista_dist[v_atual][v_destino] + G.locais[v_destino][2] + \
-				  G.lista_dist[v_destino][hostel_mais_proximo(v_destino)] < G.t_total_dia:
+				temp = t_atual + G.lista_dist[v_atual][v_destino] + G.locais[v_destino][2] + \
+				  G.lista_dist[v_destino][hostel_mais_proximo(G, v_destino)]
+				if temp <= G.t_total_dia:
+				  	t_atual += G.lista_dist[v_atual][v_destino] + G.locais[v_destino][2]
+				  	v_atual = v_destino
+				  	#t_total += t_atual
+				  	flag = True
+				  	break
+				else:
+					lista_dist_aux[v_atual][v_destino] = INF
 
+		if not flag:
+			if False in [coluna[1] for coluna in G.locais]:
+				hostel_prox = hostel_mais_proximo(G, v_atual)
+				t_atual += G.lista_dist[v_atual][hostel_prox]
+				t_total += t_atual
+				v_atual = hostel_prox
 			else:
-				prioridade[v_destino] = 1
+				t_atual += G.lista_dist[v_atual][inicio]
+				v_atual = inicio
+				t_total += t_atual
+			dias += 1
+			t_atual = 0
+	return dias, t_total
 
 
 if __name__ == "__main__":
@@ -145,8 +173,10 @@ if __name__ == "__main__":
 	qt_hostel, qt_pontos, t_total_dia, locais = gera_caso(lista_linhas)
 	g = Grafo(t_total_dia, qt_hostel, qt_pontos, locais)
 	g.dist_entre_todos()
+	random = randint(0, int(qt_hostel)-1)
+	print TP2(g, random)
 	#print g.t_total_dia, g.qt_hostel, g.qt_pontos
 	#TP2(g, 1)
-	print hostel_mais_proximo(g, 6)
+	
 	#print mais_proximo(g, 6)
 	#print calcula_dist("45.000000 68.000000","55.000000 85.000000")
