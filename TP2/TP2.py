@@ -13,11 +13,6 @@ INF = 9999999999999
 1: ["coord_x coord_y", flag, t_visit],
 2: ["coord_x coord_y", flag, t_visit]. OK!
 
-Utilizar o indice para verificar se esta lendo informacoes do hostel ou dos pontos turisticos,
-utilizando qt_hostel e qt_pontos da classe Grafo OK!
-
-Funcao pra pegar o mais proximo (diferente de hostel) OK!
-
 Estutura lista_dist:
 0: [distancias de 0 a 105 em relacao a 0],
 1: [distancias de 0 a 105 em relacao a 1]. OK!
@@ -25,6 +20,7 @@ Estutura lista_dist:
 
 class Grafo:
 
+	# construtor
 	def __init__(self, t_total_dia, qt_hostel, qt_pontos, locais): 
 		self.t_total_dia = float(t_total_dia)
 		self.qt_hostel = int(qt_hostel)
@@ -32,6 +28,7 @@ class Grafo:
 		self.locais = locais
 		self.lista_dist = []
 
+	# calcula a distancia entre todos os pontos e armazena em uma estrutura
 	def dist_entre_todos(self):
 		lista_aux = []
 		for x in range(self.qt_hostel+self.qt_pontos):
@@ -41,6 +38,7 @@ class Grafo:
 				lista_aux.append(dist)
 			self.lista_dist.append(lista_aux)
 
+# le todo o arquivo e armazena em uma estrutura
 def ler_arquivo():
 	nome_arquivo = sys.argv[1] 	
 	arquivo = open(nome_arquivo, 'r')
@@ -48,6 +46,7 @@ def ler_arquivo():
 	arquivo.close()
 	return lista_linhas 
 
+# cria a estrutura locais
 def gera_caso(lista_linhas):
 	temp = lista_linhas[0].split()
 	qt_hostel = temp[0]
@@ -74,6 +73,7 @@ def gera_caso(lista_linhas):
 
 	return qt_hostel, qt_pontos, t_total_dia, locais
 
+# calcula a distancia entre dois pontos
 def calcula_dist(v1,v2):
 	aux = v1.split()
 	x1 = float(aux[0])
@@ -83,14 +83,8 @@ def calcula_dist(v1,v2):
 	y2 = float(aux[1])
 	return math.sqrt((x2-x1)**2+(y2-y1)**2)
 
+# retorna o index do ponto mais proximo a partir de um ponto
 def mais_proximo(locais, lista_dist, vertice):
-	# TODO: 
-	'''Descobrir o vertice mais proximo apartir de um selecionado.
-	   Caso o mais proximo achado ja foi visitado, rejeitar e procurar outro.
-	   A lista de distancias nao e espelhada, verificar as outras distancias
-	   que nao estao listadas no seu vertice.
-	   Verificar se e mais facil colocar a flag visitado na estrutura lista_dist
-	'''
 	flag = False
 	lista_dist_aux = []
 	lista_dist_aux = copy.deepcopy(lista_dist)
@@ -109,11 +103,13 @@ def mais_proximo(locais, lista_dist, vertice):
 	else:
 		return -1
 
+# retorna o index do hostel mais proximo
 def hostel_mais_proximo(G, v_destino):
 	menor = min(G.lista_dist[v_destino][:G.qt_hostel])
 	index_menor = G.lista_dist[v_destino].index(menor)
 	return index_menor
 
+# verifica se um ponto e hostel
 def e_hostel(G, v_destino):
 	if v_destino < G.qt_hostel:
 		return True
@@ -128,7 +124,7 @@ def TP2(G, inicio):
 	dias = 0
 	t_total = 0.0
 
-	# quando sair do while, ir para o hostel inicial
+	# enquato tiver False na estrutura locais execute
 	while(False in [coluna[1] for coluna in G.locais]):
 		if not e_hostel(G, v_atual):
 			G.locais[v_atual][1] = True
@@ -147,7 +143,6 @@ def TP2(G, inicio):
 				if temp <= G.t_total_dia:
 				  	t_atual += G.lista_dist[v_atual][v_destino] + G.locais[v_destino][2]
 				  	v_atual = v_destino
-				  	#t_total += t_atual
 				  	flag = True
 				  	break
 				else:
@@ -167,6 +162,22 @@ def TP2(G, inicio):
 			t_atual = 0
 	return dias, t_total
 
+'''def funcao_verificacao(dias, t_total, instancia):
+	if instancia == "P1":
+
+	if instancia == "P2":
+
+	if instancia == "P3":
+
+	if instancia == "P4":
+
+	if instancia == "P5":
+
+	if instancia == "P6":
+
+	if instancia == "P7":
+
+	if instancia == "P8":'''
 
 if __name__ == "__main__":
 	lista_linhas = ler_arquivo()
@@ -174,9 +185,5 @@ if __name__ == "__main__":
 	g = Grafo(t_total_dia, qt_hostel, qt_pontos, locais)
 	g.dist_entre_todos()
 	random = randint(0, int(qt_hostel)-1)
-	print TP2(g, random)
-	#print g.t_total_dia, g.qt_hostel, g.qt_pontos
-	#TP2(g, 1)
-	
-	#print mais_proximo(g, 6)
-	#print calcula_dist("45.000000 68.000000","55.000000 85.000000")
+	dias, t_total = TP2(g, random)
+	print "1 " + str(dias) + " " + str(int(t_total))
